@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+        {% if isLogin %}
+        登录
+        {% else %}
+        注册
+        {% endif %}
+    </title>
+    <link rel="stylesheet" href="/static/css/foundation.css">
+</head>
+<body>
+<div style="position: relative;width: 100%;height: 100%;background-color: #f8f8f8;z-index: -3;"></div>
+<div class="grid-y grid-frame">
+    <div class="cell small-3 medium-3 large-3">
+    </div>
+    <div class="cell small-9 medium-9 large-9">
+        <div class="grid-x grid-margin-x">
+            <div class="cell medium-auto large-auto text-center">
+            </div>
+            <div class="cell medium-5 large-3">
+                <ul class="tabs" data-tabs id="account-tabs">
+                    {% if isLogin %}
+                    <li class="tabs-title is-active">
+                        <a href="#login" aria-selected="true">登录</a>
+                    </li>
+                    <li class="tabs-title">
+                        <a href="#register">加入我们</a>
+                    </li>
+                    {% else %}
+                    <li class="tabs-title">
+                        <a href="#login">登录</a>
+                    </li>
+                    <li class="tabs-title is-active">
+                        <a href="#register" aria-selected="true">加入我们</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="tabs-content" data-tabs-content="account-tabs">
+                    <div class="tabs-panel is-active" id="login">
+                        <form action="/login/" method="post" data-abide novalidate>
+                            {% csrf_token %}
+                            <div class="column">
+                                <label>用户名
+                                    <input name="username" type="text" value="{{ login.username.value }}" required>
+                                    <span class="form-error">请输入用户名或邮箱！</span>
+                                    <span class="form-error"
+                                          style="display: block;">{{ login.username.errors }}</span>
+                                </label>
+                            </div>
+                            <div class="column">
+                                <label>密码
+                                    <input name="password" type="password" value="{{ login.password.value }}" required>
+                                    <span class="form-error">请输入登录密码！</span>
+                                    <span class="form-error"
+                                          style="display:block;">{{ login.password.errors }}</span>
+                                </label>
+                            </div>
+                            <div class="column">
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell small-6 medium-6 large-6">
+                                        <img class="float-right" src="/code/"
+                                             onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())"/>
+                                    </div>
+                                    <div class="cell small-6 medium-6 large-6">
+                                        <input type="text" name="code" autocapitalize="off" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column text-right">
+                                <a href="#">忘记密码？</a>
+                                <button type="submit" class="button">登录</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tabs-panel" id="register">
+                        <form action="/register/" method="post" data-abide>
+                            {% csrf_token %}
+                            <div class="column">
+                                <label>用户名
+                                    <input name="username" type="text" minlength="8" maxlength="50"
+                                           value="{{ register.username.value }}" required>
+                                    <span class="form-error">请输入用户名或邮箱！</span>
+                                    <span class="form-error"
+                                          style="display: block;">{{ register.username.errors }}</span>
+                                </label>
+                            </div>
+                            <div class="column">
+                                <label>密码
+                                    <input name="password" id="password" type="password" minlength="8" maxlength="16"
+                                           value="{{ register.password.value }}" required>
+                                    <span class="form-error">请输入密码！</span>
+                                    <span class="form-error"
+                                          style="display: block;">{{ register.password.errors }}</span>
+                                </label>
+                            </div>
+                            <div class="column">
+                                <label>重复密码
+                                    <input name="re_password" type="password" minlength="8" maxlength="16"
+                                           value="{{ register.re_password.value }}" required
+                                           data-equalto="password">
+                                    <span class="form-error">请再次输入密码，确保两次密码一致！</span>
+                                    <span class="form-error"
+                                          style="display: block;">{{ register.re_password.errors }}</span>
+                                </label>
+                            </div>
+                            <div class="column">
+                                <div class="column">
+                                    <div class="grid-x grid-margin-x">
+                                        <div class="cell small-6 medium-6 large-6">
+                                            <img class="float-right" src="/code/"
+                                                 onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())"/>
+                                        </div>
+                                        <div class="cell small-6 medium-6 large-6">
+                                            <input type="text" name="code" autocapitalize="off" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column text-center">
+                                <button type="submit" class="button success expanded">注册</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="cell medium-auto large-auto"></div>
+        </div>
+    </div>
+</div>
+
+<script zIndex="-2" count="200" src="/static/js/canvas-nest.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/what-input.js"></script>
+<script src="/static/js/foundation.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).foundation();
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# 忽略python自动生成的文件
+__pycache__/
+*.pyc
+
+# 忽略数据迁移文件
+migrations/*.py
+!migrations/__init__.py
+
+# IDE
+.idea/
