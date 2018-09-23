@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import (
-    authenticate,
-    login as syslogin,
-    logout as syslogout
+    authenticate, login, logout
 )
 from django.contrib.auth.decorators import login_required
 
@@ -23,7 +21,7 @@ def index(request):
 
 
 # 登录
-def login(request):
+def user_login(request):
     form = loginform()
     if request.method == 'POST':
         form = loginform(request.POST)
@@ -31,7 +29,7 @@ def login(request):
         if form.is_valid() and ca.validate(form.clean_code()):
             user = authenticate(request, username=form.data['username'], password=form.data['password'])
             if user is not None:
-                syslogin(request, user)
+                login(request, user)
                 return HttpResponseRedirect('/')
             else:
                 form.add_error('username', '用户名或密码无效')
@@ -43,7 +41,7 @@ def login(request):
 
 
 # 注册
-def register(request):
+def user_register(request):
     form = registerform()
     if request.method == 'POST':
         form = registerform(request.POST)
@@ -59,8 +57,8 @@ def register(request):
 
 
 # 注销
-def logout(request):
-    syslogout(request)
+def user_logout(request):
+    logout(request)
     return HttpResponseRedirect('/login/')
 
 
