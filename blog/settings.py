@@ -24,7 +24,7 @@ SECRET_KEY = '*!jgj69d9m3xg--qhhvtyumf8xh08bt!$+ci1$=w2mk$74k66='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['110.66.66.78']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -111,9 +111,15 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 登录地址
+LOGIN_URL = '/login/'
+
+AUTH_USER_MODEL = 'web.UserInfo'
+# AUTHENTICATION_BACKENDS = ['web.utils.UserAuthenticate']

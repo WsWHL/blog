@@ -58,19 +58,21 @@ class captcha(object):
             x = random.randrange(m, n)
             y = random.randrange(m, n)
 
-            r = random.randrange(0, 4)
+            r = random.randrange(0, 2)
             if r == 0:
+                if x < y:
+                    x, y = y, x
                 code = '%s-%s=?' % (x, y)
                 z = x - y
-            elif r == 1:
+            else:
                 code = '%s+%s=?' % (x, y)
                 z = x + y
-            elif r == 2:
-                code = '%s*%s=?' % (x, y)
-                z = x * y
-            else:
-                code = '%s/%s=?' % (x, y)
-                z = x / y
+            # elif r == 2:
+            #     code = '%s*%s=?' % (x, y)
+            #     z = x * y
+            # else:
+            #     code = '%s/%s=?' % (x, y)
+            #     z = x / y
             self._set_answer(z)
             return code
 

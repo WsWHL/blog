@@ -18,9 +18,13 @@ class registerform(forms.Form):
     code = forms.CharField(required=True, label='', initial='',
                            error_messages={'required': '验证码不能为空'})
 
+    class Meta:
+        model = UserInfo
+        fields = ('email', 'ip')
+
     def clean_username(self):
         username = self.cleaned_data['username']
-        users = UserInfo.objects.filter(Email=username)
+        users = UserInfo.objects.filter(email=username)
         if len(users) > 0:
             raise forms.ValidationError('用户名已存在')
         return username
@@ -30,8 +34,9 @@ class registerform(forms.Form):
         return password
 
     def clean_re_password(self):
+        password = self.cleaned_data['password']
         repassword = self.cleaned_data['re_password']
-        if repassword != self.clean_password():
+        if password and repassword and password != repassword:
             raise forms.ValidationError('两次输入的密码不一致')
         return repassword
 

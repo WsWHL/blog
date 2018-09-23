@@ -1,17 +1,25 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth import (
+    authenticate,
+    login as syslogin,
+    logout as syslogout
+)
+from django.contrib.auth.decorators import login_required
 
 from web.forms.login import loginform
 from web.forms.register import registerform
-
 from web.utils.captcha import captcha
-
+from web.utils import ip
 from web.models import UserInfo
 
 
 # 首页
+@login_required
 def index(request):
-    return render(request, 'web/index.html', {'keywords': '首页,博客,index,blog,个人网站,开发者,it'})
+    if request.user.is_authenticated:
+        title = request.user.email
+    return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it'})
 
 
 # 登录
@@ -21,8 +29,12 @@ def login(request):
         form = loginform(request.POST)
         ca = captcha(request)
         if form.is_valid() and ca.validate(form.clean_code()):
-            name = form.data['username']
-            return HttpResponseRedirect('/')
+            user = authenticate(request, username=form.data['username'], password=form.data['password'])
+            if user is not None:
+                syslogin(request, user)
+                return HttpResponseRedirect('/')
+            else:
+                form.add_error('username', '用户名或密码无效')
     return render(request, 'web/account.html', {
         'isLogin': True,
         'login': form,
@@ -39,12 +51,17 @@ def register(request):
         if form.is_valid() and ca.validate(form.clean_code()):
             username = form.data['username']
             password = form.data['password']
-            user = UserInfo(Email=username, CheckKey='ahdksk', Password=password, IP='110.66.66.78')
-            user.save()
+            UserInfo.objects.create_user(username, ip.get_client_ip(request), password)
             return HttpResponseRedirect('/login/', {'form': {
                 'username': username
             }})
     return render(request, 'web/account.html', {'isLogin': False, 'register': form, 'login': loginform()})
+
+
+# 注销
+def logout(request):
+    syslogout(request)
+    return HttpResponseRedirect('/login/')
 
 
 # 验证码

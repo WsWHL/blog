@@ -2,7 +2,6 @@
 # ! -*- coding:utf-8 -*-
 
 from django import forms
-from web.models import UserInfo
 
 
 class loginform(forms.Form):
@@ -10,9 +9,19 @@ class loginform(forms.Form):
     用户登录表单
     """
 
-    username = forms.CharField(required=True, min_length=4, max_length=50, initial='')
-    password = forms.CharField(required=True, min_length=8, max_length=16, initial='')
-    code = forms.CharField(required=True, initial='')
+    username = forms.CharField(required=True, min_length=4, max_length=50, initial='',
+                               error_messages={
+                                   'required': '请输入用户名或邮箱',
+                                   'min_length': '用户名至少4个字符',
+                                   'max_length': '用户名最多50个字符'
+                               })
+    password = forms.CharField(required=True, min_length=8, max_length=16, initial='',
+                               error_messages={
+                                   'required': '请输入登录密码',
+                                   'min_length': '密码最少8个字符',
+                                   'max_length': '密码最多16个字符'
+                               })
+    code = forms.CharField(required=True, initial='', error_messages={'required': '请输入验证码'})
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -34,6 +43,3 @@ class loginform(forms.Form):
 
     def clean(self):
         super().clean()
-        users = UserInfo.objects.filter(Email=self.data['username'], Password=self.data['password'])
-        if len(users) == 0:
-            self.add_error('username', '用户名或密码无效')
