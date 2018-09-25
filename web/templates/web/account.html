@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>
-        {% if isLogin %}
-        登录
-        {% else %}
-        注册
-        {% endif %}
-    </title>
-    <link rel="stylesheet" href="/static/css/foundation.css">
-</head>
-<body>
+{% extends "web/base/base.html" %}
+{% block title %}
+{% if is_login %}登录{% else %}注册{% endif %}
+{% endblock %}
+
+{% block content %}
 <div style="position: relative;width: 100%;height: 100%;background-color: #f8f8f8;z-index: -3;"></div>
 <div class="grid-y grid-frame">
     <div class="cell small-3 medium-3 large-3">
@@ -24,7 +14,7 @@
             </div>
             <div class="cell medium-5 large-3">
                 <ul class="tabs" data-tabs id="account-tabs">
-                    {% if isLogin %}
+                    {% if is_login %}
                     <li class="tabs-title is-active">
                         <a href="#login" aria-selected="true">登录</a>
                     </li>
@@ -41,7 +31,7 @@
                     {% endif %}
                 </ul>
                 <div class="tabs-content" data-tabs-content="account-tabs">
-                    <div class="tabs-panel is-active" id="login">
+                    <div class="tabs-panel {{ is_login | default_if_none:'' }}" id="login">
                         <form action="/login/" method="post" data-abide novalidate>
                             {% csrf_token %}
                             <div class="column">
@@ -77,7 +67,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tabs-panel" id="register">
+                    <div class="tabs-panel {{ is_register | default_if_none:'' }}" id="register">
                         <form action="/register/" method="post" data-abide>
                             {% csrf_token %}
                             <div class="column">
@@ -132,32 +122,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block script %}
 <script zIndex="-2" count="200" src="/static/js/canvas-nest.js"></script>
-<script src="/static/js/jquery.js"></script>
-<script src="/static/js/what-input.js"></script>
-<script src="/static/js/foundation.js"></script>
-<script>
-    $(document).ready(function () {
-        $(document).foundation();
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
-</body>
-</html>
+{% endblock %}

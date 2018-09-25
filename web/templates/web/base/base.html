@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}Blog{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/foundation.css">
+    {% block style %}{% endblock %}
+</head>
+<body>
+{% block content %}{% endblock %}
+
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/what-input.js"></script>
+<script src="/static/js/foundation.js"></script>
+{% block script %}{% endblock %}
+<script>
+    $(document).ready(function () {
+        $(document).foundation();
+    })
+</script>
+</body>
+</html>

@@ -34,7 +34,7 @@ def user_login(request):
             else:
                 form.add_error('username', '用户名或密码无效')
     return render(request, 'web/account.html', {
-        'isLogin': True,
+        'is_login': 'is-active',
         'login': form,
         'register': registerform(),
     })
@@ -53,7 +53,11 @@ def user_register(request):
             return HttpResponseRedirect('/login/', {'form': {
                 'username': username
             }})
-    return render(request, 'web/account.html', {'isLogin': False, 'register': form, 'login': loginform()})
+    return render(request, 'web/account.html', {
+        'is_register':'is-active',
+        'register': form,
+        'login': loginform()
+    })
 
 
 # 注销
