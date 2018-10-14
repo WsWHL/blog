@@ -116,7 +116,13 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+# 静态文件本地绝对路径
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'web', 'static')
+
+# 动态文件本地绝对路径
+MEDIA_URL = '/static/uploads/'
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'uploads')
 
 # 登录地址
 LOGIN_URL = '/login/'

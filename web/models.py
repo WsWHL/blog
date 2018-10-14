@@ -20,9 +20,19 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def get_deleted_user_id(self):
+        user = self.model().objects.get(username='delete')
+        if user is not None:
+            return user.id
+        return -1;
+
 
 class UserInfo(AbstractBaseUser):
     """用户信息"""
+
+    class Meta:
+        db_table = 'blog_userinfo'
+
     id = models.BigAutoField(unique=True, primary_key=True, db_index=True)
     username = models.CharField(max_length=150, unique=True, null=True)
     password = models.CharField(max_length=128)
@@ -45,6 +55,7 @@ class UserInfo(AbstractBaseUser):
     authorized = models.BooleanField(default=False)
     create_time = models.DateTimeField(null=False, auto_now_add=True)
     update_time = models.DateTimeField(null=True)
+    0
     groups = models.ManyToManyField(blank=True, related_name='user_set', related_query_name='user', to='auth.Group')
     user_permissions = models.ManyToManyField(blank=True, related_name='user_set', related_query_name='user',
                                               to='auth.Permission')
@@ -52,6 +63,72 @@ class UserInfo(AbstractBaseUser):
     REQUIRED_FIELDS = ['first_name', 'last_name']
     objects = UserManager()
 
+    def __str__(self):
+        return self.email
 
-def __str__(self):
-    return self.email
+
+class BaseModel(models.Model):
+    """模型抽象类"""
+
+    class Meta:
+        abstract = True
+
+    id = models.AutoField(unique=True, primary_key=True, db_index=True)
+    create_user = models.ForeignKey(UserInfo, on_delete=models.SET(UserInfo.objects.get_deleted_user_id),
+                                    related_name='+')
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_user = models.ForeignKey(UserInfo, on_delete=models.SET(UserInfo.objects.get_deleted_user_id), null=True,
+                                    related_name='+')
+    update_time = models.DateTimeField(null=True)
+
+
+class Category(BaseModel):
+    """分类"""
+
+    class Meta:
+        db_table = 'blog_category'
+
+    name = models.CharField(max_length=50)
+    spell = models.CharField(max_length=200, unique=True, db_index=True)
+    level = models.SmallIntegerField()
+    parent_id = models.IntegerField()
+    sort = models.IntegerField()
+
+
+class Tag(BaseModel):
+    """标签"""
+
+    class Meta:
+        db_table = 'blog_tag'
+
+    name = models.CharField(max_length=50)
+    spell = models.CharField(max_length=200, unique=True, db_index=True)
+    sort = models.IntegerField()
+
+
+class Article(BaseModel):
+    """文章"""
+
+    class Meta:
+        db_table = 'blog_article'
+
+    title = models.CharField(max_length=100, db_index=True)
+    subject = models.CharField(max_length=500, null=True)
+    content = models.TextField()
+    cover = models.URLField(max_length=1000, null=True)
+    images = models.TextField(null=True)
+    category_ids = models.CharField(max_length=200, null=True)
+    tag_ids = models.CharField(max_length=200, null=True)
+    hits = models.IntegerField()
+    score = models.DecimalField(max_digits=3, decimal_places=1)
+
+
+class UploadFile(BaseModel):
+    """上传文件"""
+
+    class Meta:
+        db_table = 'blog_uploadfile'
+
+    name = models.CharField(max_length=1000)
+    type = models.CharField(max_length=20, db_index=True)
+    file = models.FileField(upload_to='%Y/%m/%d')

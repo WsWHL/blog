@@ -1,0 +1,63 @@
+{% extends "web/base/base.html" %}
+{% block title %}博客编辑{% endblock %}
+
+{% block content %}
+<div class="grid-container">
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
+            <form action="#" method="post" data-abide novalidate>
+                {% csrf_token %}
+                <div class="column">
+                    <label>
+                        <input name="title" type="text" minlength="10" maxlength="100" placeholder="标题" required>
+                        <span class="form-error">请输入文章标题！</span>
+                    </label>
+                </div>
+                <div class="column">
+                    <label>
+                        <input name="subject" type="text" maxlength="500" placeholder="文章主题内容">
+                    </label>
+                </div>
+                <div class="column">
+                    <label>
+
+                    </label>
+                </div>
+                <div class="column">
+                    <div id="editor"></div>
+                </div>
+                <br>
+                <div class="column text-left">
+                    <button type="submit" class="button">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/js/ckeditor.js"></script>
+<script type="text/javascript" src="/static/js/ckeditor-custom.js"></script>
+<script type="text/javascript">
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            language: 'zh',
+            image: {
+                toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                styles: ['full', 'side']
+            },
+            ckfinder: {
+                uploadUrl: '/upload/'
+            }
+        })
+        .then(editor => {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new UploadAdapter(loader, editor.config.get('ckfinder.uploadUrl'), editor.t)
+            };
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+{% endblock %}

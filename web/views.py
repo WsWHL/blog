@@ -1,23 +1,43 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth import (
     authenticate, login, logout
 )
 from django.contrib.auth.decorators import login_required
 
-from web.forms.login import loginform
-from web.forms.register import registerform
+from web.forms import *
+from web.models import *
 from web.utils.captcha import captcha
 from web.utils import ip
-from web.models import UserInfo
 
 
 # 首页
-@login_required
 def index(request):
+    title = '欢迎来到本站'
     if request.user.is_authenticated:
         title = request.user.email
     return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it'})
+
+
+# 博客编辑
+@login_required
+def article(request):
+    if request.user.is_authenticated:
+        pass
+    return render(request, 'web/article.html', {'title': ''})
+
+
+# 上传
+@login_required
+def upload(request):
+    if request.method == 'POST':
+        form = fileform(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.clean_file()
+            model = UploadFile(create_user=request.user, name=file.name, type=file.content_type, file=file)
+            model.save()
+            return JsonResponse({'uploaded': True, 'url': model.file.url});
+    return JsonResponse({'uploaded': False, 'error': {'message': '请求方式错误！'}})
 
 
 # 登录
@@ -54,7 +74,7 @@ def user_register(request):
                 'username': username
             }})
     return render(request, 'web/account.html', {
-        'is_register':'is-active',
+        'is_register': 'is-active',
         'register': form,
         'login': loginform()
     })
