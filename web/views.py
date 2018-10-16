@@ -5,10 +5,10 @@ from django.contrib.auth import (
 )
 from django.contrib.auth.decorators import login_required
 
-from web.forms import *
 from web.models import UserInfo, UploadFile
 from web.utils.captcha import captcha
 from web.utils import ip
+from web.forms import *
 
 
 # 首页

@@ -1,3 +1,6 @@
-from .login import loginform
-from .register import registerform
-from .file import fileform
+from .user import loginform, registerform
+from .article import fileform
+
+__all__ = [
+    'loginform', 'registerform', 'fileform'
+]
