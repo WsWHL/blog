@@ -14,21 +14,12 @@
             </div>
             <div class="cell medium-5 large-3">
                 <ul class="tabs" data-tabs id="account-tabs">
-                    {% if is_login %}
-                    <li class="tabs-title is-active">
-                        <a href="#login" aria-selected="true">登录</a>
-                    </li>
-                    <li class="tabs-title">
-                        <a href="#register">加入我们</a>
-                    </li>
-                    {% else %}
-                    <li class="tabs-title">
+                    <li class="tabs-title {{ is_login | default_if_none:'' }}">
                         <a href="#login">登录</a>
                     </li>
-                    <li class="tabs-title is-active">
-                        <a href="#register" aria-selected="true">加入我们</a>
+                    <li class="tabs-title {{ is_register | default_if_none:'' }}">
+                        <a href="#register">加入我们</a>
                     </li>
-                    {% endif %}
                 </ul>
                 <div class="tabs-content" data-tabs-content="account-tabs">
                     <div class="tabs-panel {{ is_login | default_if_none:'' }}" id="login">

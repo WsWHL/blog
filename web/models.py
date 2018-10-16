@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
         user = self.model().objects.get(username='delete')
         if user is not None:
             return user.id
-        return -1;
+        return -1
 
 
 class UserInfo(AbstractBaseUser):
@@ -55,7 +55,6 @@ class UserInfo(AbstractBaseUser):
     authorized = models.BooleanField(default=False)
     create_time = models.DateTimeField(null=False, auto_now_add=True)
     update_time = models.DateTimeField(null=True)
-    0
     groups = models.ManyToManyField(blank=True, related_name='user_set', related_query_name='user', to='auth.Group')
     user_permissions = models.ManyToManyField(blank=True, related_name='user_set', related_query_name='user',
                                               to='auth.Permission')
