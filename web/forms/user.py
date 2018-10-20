@@ -5,7 +5,7 @@ from django import forms
 from web.models import UserInfo
 
 
-class loginform(forms.Form):
+class LoginFrom(forms.Form):
     """
     用户登录表单
     """
@@ -46,7 +46,7 @@ class loginform(forms.Form):
         super().clean()
 
 
-class registerform(forms.Form):
+class RegisterForm(forms.Form):
     """
     用户注册表单
     """

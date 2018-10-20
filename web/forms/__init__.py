@@ -1,6 +1,9 @@
-from .user import loginform, registerform
-from .article import fileform
+from .common import FileForm
+from .user import LoginFrom, RegisterForm
+from .article import ArticleForm
 
 __all__ = [
-    'loginform', 'registerform', 'fileform'
+    'FileForm',
+    'LoginFrom', 'RegisterForm',
+    'ArticleForm'
 ]

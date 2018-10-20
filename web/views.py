@@ -5,7 +5,7 @@ from django.contrib.auth import (
 )
 from django.contrib.auth.decorators import login_required
 
-from web.models import UserInfo, UploadFile
+from web.models import UserInfo, UploadFile, Article
 from web.utils.captcha import captcha
 from web.utils import ip
 from web.forms import *
@@ -21,17 +21,27 @@ def index(request):
 
 # 博客编辑
 @login_required
-def article(request):
-    if request.user.is_authenticated:
-        pass
-    return render(request, 'web/article.html', {'title': ''})
+def article(request, article_id=0):
+    form = ArticleForm()
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            model = Article(title=form.get_title(), subject=form.get_subject(), cover=form.get_cover(),
+                            content=form.get_content(), category_ids=form.get_category_ids(),
+                            tag_ids=form.get_tag_ids(), hits=0, score=0, create_user=request.user)
+            model.save()
+    elif article_id > 0:
+        model = Article.objects.filter(id=article_id)
+    return render(request, 'web/article.html', {
+        'article': form
+    })
 
 
 # 上传
 @login_required
 def upload(request):
     if request.method == 'POST':
-        form = fileform(request.POST, request.FILES)
+        form = FileForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.clean_file()
             model = UploadFile(create_user=request.user, name=file.name, type=file.content_type, file=file)
@@ -42,9 +52,9 @@ def upload(request):
 
 # 登录
 def user_login(request):
-    form = loginform()
+    form = LoginFrom()
     if request.method == 'POST':
-        form = loginform(request.POST)
+        form = LoginFrom(request.POST)
         ca = captcha(request)
         if form.is_valid() and ca.validate(form.clean_code()):
             user = authenticate(request, username=form.data['username'], password=form.data['password'])
@@ -56,15 +66,15 @@ def user_login(request):
     return render(request, 'web/account.html', {
         'is_login': 'is-active',
         'login': form,
-        'register': registerform(),
+        'register': RegisterForm(),
     })
 
 
 # 注册
 def user_register(request):
-    form = registerform()
+    form = RegisterForm()
     if request.method == 'POST':
-        form = registerform(request.POST)
+        form = RegisterForm(request.POST)
         ca = captcha(request)
         if form.is_valid() and ca.validate(form.clean_code()):
             username = form.data['username']
@@ -76,7 +86,7 @@ def user_register(request):
     return render(request, 'web/account.html', {
         'is_register': 'is-active',
         'register': form,
-        'login': loginform()
+        'login': LoginFrom()
     })
 
 
