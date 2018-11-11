@@ -1,4 +1,5 @@
 import django
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager
@@ -22,16 +23,44 @@ class UserManager(BaseUserManager):
 
     def get_deleted_user_id(self):
         user = self.model().objects.get(username='delete')
-        if user is not None:
+        if user:
             return user.id
         return -1
+
+
+class BaseManager(models.Manager):
+    """自定义模型管理器"""
+
+    def first(self, *args, **kwargs):
+        """获取一条数据"""
+
+        clone = self.filter(*args, **kwargs)
+        clone = clone.order_by()
+        if len(clone) >= 1:
+            return clone._result_cache[0]
+        return None
+
+    def save_new(self, model, user):
+        """保存或更新数据"""
+
+        if model.id and model.id > 0:
+            origin = self.first(id=model.id)
+            if origin:
+                model.create_user = origin.create_user
+                model.create_time = origin.create_time
+                model.update_user = user
+                model.update_time = timezone.now()
+        else:
+            model.create_user = user
+            model.create_time = timezone.now()
+        model.save()
 
 
 class UserInfo(AbstractBaseUser):
     """用户信息"""
 
     class Meta:
-        db_table = 'blog_userinfo'
+        db_table = 'user_info'
 
     id = models.BigAutoField(unique=True, primary_key=True, db_index=True)
     username = models.CharField(max_length=150, unique=True, null=True)
@@ -79,13 +108,14 @@ class BaseModel(models.Model):
     update_user = models.ForeignKey(UserInfo, on_delete=models.SET(UserInfo.objects.get_deleted_user_id), null=True,
                                     related_name='+')
     update_time = models.DateTimeField(null=True)
+    objects = BaseManager()
 
 
 class Category(BaseModel):
     """分类"""
 
     class Meta:
-        db_table = 'blog_category'
+        db_table = 'category'
 
     name = models.CharField(max_length=50)
     spell = models.CharField(max_length=200, unique=True, db_index=True)
@@ -98,7 +128,7 @@ class Tag(BaseModel):
     """标签"""
 
     class Meta:
-        db_table = 'blog_tag'
+        db_table = 'tag'
 
     name = models.CharField(max_length=50)
     spell = models.CharField(max_length=200, unique=True, db_index=True)
@@ -109,7 +139,7 @@ class Article(BaseModel):
     """文章"""
 
     class Meta:
-        db_table = 'blog_article'
+        db_table = 'article'
 
     title = models.CharField(max_length=100, db_index=True)
     subject = models.CharField(max_length=500, null=True)
@@ -126,8 +156,9 @@ class UploadFile(BaseModel):
     """上传文件"""
 
     class Meta:
-        db_table = 'blog_uploadfile'
+        db_table = 'upload_file'
 
     name = models.CharField(max_length=1000)
     type = models.CharField(max_length=20, db_index=True)
+    size = models.IntegerField()
     file = models.FileField(upload_to='%Y/%m/%d')
