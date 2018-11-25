@@ -67,7 +67,9 @@
                                 {% endif %}
                                 <div class="media-object-section">
                                     <h4>{{ article.title }}</h4>
-                                    <p>{{ article.subject }}</p>
+                                    {% autoescape off %}
+                                        {{ article.content }}
+                                    {% endautoescape %}
                                 </div>
                                 {% if not forloop.counter|divisibleby:2 %}
                                     <div class="media-object-section">
