@@ -15,4 +15,5 @@ urlpatterns = [
                   path('article/', views.article, name='article'),
                   path('article/<int:article_id>/', views.article, name='article_id'),
                   path('upload/', views.upload, name='upload'),
+                  path('reading/<int:article_id>/', views.reading, name='reading'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

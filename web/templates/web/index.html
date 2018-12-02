@@ -3,18 +3,17 @@
 
 {% block content %}
     <div class="callout large primary" id="banner">
-        <div class="row column text-left">
-            <h1>{{ title }}</h1>
-            <!--        <div class="media-object" style="height: 100px;">
-                    <div class="media-object-section">
-                    <img src="https://placeimg.com/200/200/people?t=1"
-                    style="width: 100px;height: 100px;border-radius: 50px;">
-                    </div>
-                    <div class="media-object-section">
-                    <h4>孤独患者.</h4>
+        <div class="row column">
+            <div class="media-object align-center-middle" style="height: 100px;">
+                <div class="media-object-section">
+                    <img src="https://placeimg.com/200/200/people?t=2"
+                         style="width: 80px;height: 80px;border-radius: 40px;">
+                </div>
+                <div class="media-object-section">
+                    <h4>孤独患者</h4>
                     <p>丢失灵魂的肉体，七窍已坠入地狱。</p>
-                    </div>
-                    </div>-->
+                </div>
+            </div>
         </div>
     </div>
     <div class="grid-container" id="content">
@@ -23,80 +22,85 @@
                 <div class="cell small-12 medium-8 large-8">
                     {% for article in articles %}
                         {% if forloop.counter0 == 0 %}
-                            <div>
-                                <div class="column">
-                                    <div>
-                                        <ul class="menu">
-                                            <li class="is-active"><a href="/">首页</a></li>
-                                            <li><a href="#">时间轴</a></li>
-                                            <li><a href="#">技术杂谈</a></li>
-                                            <li><a href="#">关于</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <h3>
-                                    {{ article.title }}
-                                    <small>{{ article.create_time|date:'d/m/Y' }}</small>
-                                </h3>
-                                <img class="thumbnail" src="https://placehold.it/850x350">
-                                <p>{{ article.subject }}</p>
-                                <div class="callout">
-                                    <ul class="menu simple">
-                                        <li>
-                                            <a href="/index/u{{ article.create_user_id }}">
-                                                Author: {{ article.create_user_name }}
-                                            </a>
-                                        </li>
-                                        <li><a href="#">Comments: {{ article.hits }}</a></li>
-                                        {% if article.tags %}
-                                            <li class="float-right show-for-medium">
-                                                {% for tag in article.tags %}
-                                                    <span class="primary label">{{ tag }}</span>
-                                                {% endfor %}
-                                            </li>
-                                        {% endif %}
+                            <div id="sticky-menu" data-sticky-container>
+                                <div class="column" data-sticky data-options="marginTop:0;"
+                                     style="width:100%;background-color: rgb(254,254,254);" data-anchor="content">
+                                    <ul class="menu">
+                                        <li class="is-active"><a href="/">首页</a></li>
+                                        <li><a href="#">时间轴</a></li>
+                                        <li><a href="#">技术杂谈</a></li>
+                                        <li><a href="#">关于</a></li>
                                     </ul>
                                 </div>
                             </div>
-                        {% else %}
-                            <div class="media-object">
-                                {% if forloop.counter|divisibleby:2 %}
-                                    <div class="media-object-section">
-                                        <img src="https://placeimg.com/200/200/people?t=1">
-                                    </div>
-                                {% endif %}
-                                <div class="media-object-section">
-                                    <h4>{{ article.title }}</h4>
-                                    {% autoescape off %}
-                                        {{ article.content }}
-                                    {% endautoescape %}
-                                </div>
-                                {% if not forloop.counter|divisibleby:2 %}
-                                    <div class="media-object-section">
-                                        <img src="https://placeimg.com/200/200/people?t=1">
-                                    </div>
-                                {% endif %}
+                            <h3>
+                                <a href="/reading/{{ article.id }}/">{{ article.title }}</a>
+                                <small>{{ article.create_time|date:'d/m/Y' }}</small>
+                            </h3>
+                            <img class="thumbnail" src="https://placehold.it/850x350">
+                            <p>{{ article.subject }}</p>
+                            <div class="callout">
+                                <ul class="menu simple">
+                                    <li>
+                                        <a href="/index/u{{ article.create_user_id }}">
+                                            Author: {{ article.create_user_name }}
+                                        </a>
+                                    </li>
+                                    <li><a href="#">Comments: {{ article.hits }}</a></li>
+                                    {% if article.tags %}
+                                        <li class="float-right show-for-medium">
+                                            {% for tag in article.tags %}
+                                                <span class="primary label">{{ tag }}</span>
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
+                                </ul>
                             </div>
+                        {% else %}
+                            <div class="media-object align-middle">
+                                <div class="media-object-section show-for-medium">
+                                    <div class="thumbnail">
+                                        <img src="https://placeimg.com/200/200/people?t=1"
+                                             style="width: 100px;height: 100px;">
+                                    </div>
+                                </div>
+                                <div class="media-object-section" style="width: 100%;">
+                                    <h5><a href="/reading/{{ article.id }}/">{{ article.title }}</a></h5>
+                                    <p>{{ article.subject }}</p>
+                                    <p>作者：
+                                        <a href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name }}</a>
+                                        <span class="float-right">{{ article.create_time|date:'Y/m/d H:i:s' }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            {% if not forloop.last %}
+                                <hr>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </div>
-                <div class="cell medium-3 medium-offset-1 large-3 large-offset-1 show-for-medium" data-sticky-container>
+                <div class=" cell medium-3 medium-offset-1 large-3 large-offset-1 show-for-medium"
+                     data-sticky-container>
                     <div class="sticky" data-sticky data-anchor="content">
-                        <h4>Categories</h4>
-                        <ul>
-                            <li><a href="#">Skyler</a></li>
-                            <li><a href="#">Jesse</a></li>
-                            <li><a href="#">Mike</a></li>
-                            <li><a href="#">Holly</a></li>
-                        </ul>
-                        <h4>Authors</h4>
-                        <ul>
-                            <li><a href="#">Skyler</a></li>
-                            <li><a href="#">Jesse</a></li>
-                            <li><a href="#">Mike</a></li>
-                            <li><a href="#">Holly</a></li>
-                        </ul>
-                    </div>
+                        {% if categories %}
+                            <h4>分类</h4>
+                            <ul>
+                                {% for category in categories %}
+                                    <li><a href="/{{ category.spell }}/">{{ category.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if authors %}
+                            <h4>作者</h4>
+                            <ul>
+                                {% for author in authors %}
+                                    <li>
+                                        <a href="/index/u{{ author.create_user__id }}">{{ author.create_user__email }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            </div>
+                        {% endif %}
                 </div>
             </div>
         {% endif %}
@@ -118,5 +122,16 @@
             </div>
         {% endif %}
     </div>
-    <hr>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sticky-menu').on('sticky.zf.stuckto:top', function () {
+                $(this).children().css('box-shadow', '0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08)');
+            }).on('sticky.zf.unstuckfrom:top', function () {
+                $(this).children().css('box-shadow', 'unset');
+            });
+        });
+    </script>
 {% endblock %}

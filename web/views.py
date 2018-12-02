@@ -5,10 +5,11 @@ from django.contrib.auth import (
 )
 from django.contrib.auth.decorators import login_required
 
-from web.models import UserInfo, UploadFile, Article
+from web.models import UserInfo, UploadFile, Article, Category
 from web.utils.captcha import captcha
 from web.utils import ip
 from web.forms import *
+import json
 
 
 # 首页
@@ -17,18 +18,20 @@ def index(request, user_id=0, pager=0, size=20):
     if request.user.is_authenticated:
         title = request.user.email
     if user_id and user_id > 0:
-        articles = Article.objects.filter(create_user_id=user_id)[pager:size]
-        count = Article.objects.filter(create_user_id=user_id).count()
+        articles = Article.objects.filter(create_user_id=user_id, is_deleted=False).order_by('create_time', 'id')[
+                   pager:size]
+        count = Article.objects.filter(create_user_id=user_id, is_deleted=False).count()
     else:
-        articles = Article.objects.all()[pager:size]
-        count = Article.objects.count()
+        articles = Article.objects.filter(is_deleted=False).order_by('create_time', 'id')[pager:size]
+        count = Article.objects.filter(is_deleted=False).count()
     items = []
+    categories = Category.objects.filter(is_deleted=False).order_by('level', 'sort', 'create_time')
+    authors = Article.objects.values('create_user__id', 'create_user__username', 'create_user__email').distinct()
     for item in articles:
         items.append({
             'id': item.id,
             'title': item.title,
             'subject': item.subject,
-            'content': item.content,
             'cover': item.cover,
             'tags': ['Python', '高并发'],
             'categories': ['大数据'],
@@ -41,7 +44,8 @@ def index(request, user_id=0, pager=0, size=20):
 
     return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it',
                                               'articles': items,
-                                              'categories': [],
+                                              'categories': categories,
+                                              'authors': authors,
                                               'count': count,
                                               'pager': pager,
                                               'total_pager': (int(count / size) + 1, int(count / size))[
@@ -54,12 +58,15 @@ def index(request, user_id=0, pager=0, size=20):
 def article(request, article_id=0):
     form = ArticleForm()
     model = None
+    categories = Category.objects.filter(is_deleted=False).order_by('level', 'sort', 'create_time') \
+        .values('id', 'name', 'spell')
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
+            category_ids = ','.join(str(i['id']) for i in form.get_categories().values('id'))
             model = Article(title=form.get_title(), subject=form.get_subject(), cover=form.get_cover(),
-                            content=form.get_content(), category_ids=form.get_category_ids(),
-                            tag_ids=form.get_tag_ids(), hits=0, score=0)
+                            content=form.get_content(), category_ids=category_ids,
+                            tag_ids='', hits=0, score=0)
             if article_id > 0:
                 model.id = article_id
             Article.objects.save_new(model, request.user)
@@ -70,16 +77,20 @@ def article(request, article_id=0):
             'title': model.title,
             'subject': model.subject,
             'content': model.content,
-            'cover': model.cover,
-            'category_ids': model.category_ids,
-            'tag_ids': model.tag_ids
+            'cover': model.cover
         })
+        category_ids = model.category_ids.split(',')
+        for category in categories:
+            if str(category['id']) in category_ids:
+                category['checked'] = 'checked'
         if article_id <= 0 and model.id:
             return HttpResponseRedirect('/article/%d/' % model.id, {
-                'article': form
+                'article': form,
+                'categories': categories
             })
     return render(request, 'web/article.html', {
-        'article': form
+        'article': form,
+        'categories': categories
     })
 
 
@@ -95,6 +106,28 @@ def upload(request):
             model.save()
             return JsonResponse({'uploaded': True, 'url': model.file.url});
     return JsonResponse({'uploaded': False, 'error': {'message': '请求方式错误！'}})
+
+
+# 阅读文章
+def reading(request, article_id):
+    data = None
+    if article_id and article_id > 0:
+        model = Article.objects.first(id=article_id)
+        if model:
+            data = {
+                'title': model.title,
+                'subject': model.subject,
+                'content': model.content,
+                'cover': model.cover,
+                'category_ids': model.category_ids,
+                'tag_ids': model.tag_ids,
+                'create_user_id': model.create_user.id,
+                'create_user_email': model.create_user.email,
+                'create_time': model.create_time
+            }
+    return render(request, 'web/reading.html', {
+        'article': data
+    })
 
 
 # 登录

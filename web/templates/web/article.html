@@ -2,101 +2,125 @@
 {% block title %}博客编辑{% endblock %}
 
 {% block content %}
-<div data-sticky-container>
-    <div class="title-bar" data-sticky data-options="marginTop:0;" data-responsive-toggle="header-menu"
-         data-hide-for="medium"
-         data-top-anchor="1" data-btm-anchor="content:bottom">
-        <div class="title-bar-title">孤独患者</div>
-        <div class="title-bar-right">
-            <button class="menu-icon" type="button" data-toggle="header-menu"></button>
+    <div data-sticky-container>
+        <div class="title-bar" data-sticky data-options="marginTop:0;" data-responsive-toggle="header-menu"
+             data-hide-for="medium"
+             data-top-anchor="1" data-btm-anchor="content:bottom">
+            <div class="title-bar-title">孤独患者</div>
+            <div class="title-bar-right">
+                <button class="menu-icon" type="button" data-toggle="header-menu"></button>
+            </div>
+        </div>
+        <div class="top-bar" id="header-menu">
+            <div class="top-bar-left">
+                <ul class="menu" data-dropdown-menu>
+                    <li class="menu-text show-for-medium">孤独患者</li>
+                    <li><a href="/">首页</a></li>
+                    <li><a href="#">时间轴</a></li>
+                    <li><a href="#">技术杂谈</a></li>
+                    <li><a href="#">关于</a></li>
+                </ul>
+            </div>
+            <div class="top-bar-right">
+                <ul class="menu">
+                    <li><input type="search" placeholder="Search"></li>
+                    <li>
+                        <button type="button" class="button">搜索</button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    <div class="top-bar" id="header-menu">
-        <div class="top-bar-left">
-            <ul class="menu" data-dropdown-menu>
-                <li class="menu-text">孤独患者</li>
-                <li><a href="/">首页</a></li>
-                <li><a href="#">时间轴</a></li>
-                <li><a href="#">技术杂谈</a></li>
-                <li><a href="#">关于作者</a></li>
-            </ul>
-        </div>
-        <div class="top-bar-right">
-            <ul class="menu">
-                <li><input type="search" placeholder="Search"></li>
-                <li>
-                    <button type="button" class="button">搜索</button>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-<br>
-<div class="grid-container">
-    <div class="grid-x grid-margin-x">
-        <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
-            <form action="#" method="post" enctype="multipart/form-data" data-abide novalidate>
-                {% csrf_token %}
-                <div class="column">
-                    <label>
-                        <input name="title" type="text" align="middle" autofocus="autofocus" minlength="10"
-                               maxlength="100" placeholder="标题"
-                               required value="{{ article.title.value }}">
-                        <span class="form-error">请输入文章标题！</span>
-                    </label>
-                </div>
-                <div class="column">
-                    <ul class="vertical menu" data-accordion-menu>
-                        <li>
-                            <a href="#">简要信息</a>
-                            <ul class="menu vertical nested">
-                                <li>
-                                    <input name="subject" type="text" maxlength="500" placeholder="主题内容"
-                                           value="{{ article.subject.value }}">
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <br>
-                </div>
-                <div class="column">
+    <br>
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
+                <form action="#" method="post" enctype="multipart/form-data" data-abide novalidate>
+                    {% csrf_token %}
+                    <div class="column">
+                        <label>
+                            <input name="title" type="text" align="middle" autofocus="autofocus" minlength="10"
+                                   maxlength="100" placeholder="标题"
+                                   required value="{{ article.title.value }}">
+                            <span class="form-error">请输入文章标题！</span>
+                        </label>
+                    </div>
+                    <div class="column">
+                        <ul class="vertical menu" data-accordion-menu>
+                            <li>
+                                <a href="#">简要信息</a>
+                                <ul class="menu vertical nested">
+                                    <li>
+                                        <input name="subject" type="text" maxlength="500" placeholder="主题内容"
+                                               value="{{ article.subject.value }}">
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    {% if categories %}
+                        <br>
+                        <div class="column">
+                            <fieldset>
+                                <legend>分类：</legend>
+                                {% for category in  categories %}
+                                    <input id="{{ category.spell }}" name="categories" type="checkbox"
+                                           value="{{ category.id }}" {{ category.checked }}>
+                                    <label for="{{ category.spell }}">{{ category.name }}</label>
+                                {% endfor %}
+                            </fieldset>
+                        </div>
+                    {% endif %}
+                    <div class="column">
                     <textarea id="editor" name="content">
                         {{ article.content.value }}
                     </textarea>
-                </div>
-                <br>
-                <div class="column text-left">
-                    <button type="submit" class="button">提交</button>
-                </div>
-            </form>
+                    </div>
+                    <br>
+                    <div class="column">
+                        <p>置顶：</p>
+                        <div class="switch medium">
+                            <input class="switch-input" id="topping" name="topping" type="checkbox">
+                            <label class="switch-paddle" for="topping">
+                                <span class="show-for-sr">是否置顶？</span>
+                                <span class="switch-active" aria-hidden="true">是</span>
+                                <span class="switch-inactive" aria-hidden="true">否</span>
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="column text-left">
+                        <button type="submit" class="button">提交</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block script %}
-<script type="text/javascript" src="/static/js/ckeditor.js"></script>
-<script type="text/javascript" src="/static/js/ckeditor-custom.js"></script>
-<script type="text/javascript">
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            name: 'content',
-            language: 'zh',
-            image: {
-                toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-                styles: ['full', 'side']
-            },
-            ckfinder: {
-                uploadUrl: '/upload/'
-            }
-        })
-        .then(editor => {
-            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                return new UploadAdapter(loader, editor.config.get('ckfinder.uploadUrl'), editor.t)
-            };
-        })
-        .catch(error => {
-            console.error(error);
-        });
-</script>
+    <script type="text/javascript" src="/static/js/ckeditor.js"></script>
+    <script type="text/javascript" src="/static/js/ckeditor-custom.js"></script>
+    <script type="text/javascript">
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                name: 'content',
+                language: 'zh',
+                image: {
+                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                    styles: ['full', 'side']
+                },
+                ckfinder: {
+                    uploadUrl: '/upload/'
+                }
+            })
+            .then(editor => {
+                editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                    return new UploadAdapter(loader, editor.config.get('ckfinder.uploadUrl'), editor.t)
+                };
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 {% endblock %}

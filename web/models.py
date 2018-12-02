@@ -108,6 +108,7 @@ class BaseModel(models.Model):
     update_user = models.ForeignKey(UserInfo, on_delete=models.SET(UserInfo.objects.get_deleted_user_id), null=True,
                                     related_name='+')
     update_time = models.DateTimeField(null=True)
+    is_deleted = models.BooleanField(default=False)
     objects = BaseManager()
 
 

@@ -1,4 +1,5 @@
 from django import forms
+from web.models import Category
 
 
 class ArticleForm(forms.Form):
@@ -21,14 +22,10 @@ class ArticleForm(forms.Form):
                               error_messages={
                                   'required': '文章内容不能为空'
                               })
-    category_ids = forms.CharField(required=False, max_length=200,
-                                   error_messages={
-                                       'max_length': '文章分类信息过多'
-                                   })
-    tag_ids = forms.CharField(required=False, max_length=200,
-                              error_messages={
-                                  'max_length': '文章标签信息过多'
-                              })
+    categories = forms.ModelMultipleChoiceField(required=False,
+                                                widget=forms.CheckboxSelectMultiple(),
+                                                queryset=Category.objects.filter(is_deleted=False)
+                                                .order_by('level', 'sort', 'create_time'))
 
     def get_title(self):
         return self.cleaned_data['title']
@@ -42,8 +39,5 @@ class ArticleForm(forms.Form):
     def get_content(self):
         return self.cleaned_data['content']
 
-    def get_category_ids(self):
-        return self.cleaned_data['category_ids']
-
-    def get_tag_ids(self):
-        return self.cleaned_data['tag_ids']
+    def get_categories(self):
+        return self.cleaned_data['categories']

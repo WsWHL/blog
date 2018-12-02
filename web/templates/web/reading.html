@@ -1,0 +1,26 @@
+{% extends 'web/base/base.html' %}
+{% block title %}
+    {{ article.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12 medium-12 large-8 large-offset-2">
+                <div class="callout">
+                    <h3 class="text-center">{{ article.title }}</h3>
+                    <p class="text-center">{{ article.subject }}</p>
+                    <br>
+                    {% autoescape off %}
+                        {{ article.content }}
+                    {% endautoescape %}
+                    <br>
+                    <p>
+                        作者：<a href="/index/u{{ article.create_user_id }}">{{ article.create_user_email }}</a>
+                        <span class="float-right">{{ article.create_time|date:'Y年m月d日 H:i:s' }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
