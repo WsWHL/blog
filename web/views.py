@@ -1,15 +1,21 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+import os
+import time
+import base64
+
 from django.contrib.auth import (
     authenticate, login, logout
 )
 from django.contrib.auth.decorators import login_required
+from django.core import signing
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
+from django.conf import settings
 
-from web.models import UserInfo, UploadFile, Article, Category
-from web.utils.captcha import captcha
-from web.utils import ip
 from web.forms import *
-import json
+from web.models import UserInfo, UploadFile, Article, Category
+from web.utils import ip, email
+from web.utils.captcha import captcha
 
 
 # 首页
@@ -39,13 +45,15 @@ def index(request, user_id=0, pager=0, size=20):
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
             'create_user_name': item.create_user.email,
-            'update_time': item.update_time
+            'update_time': item.update_time,
+            'user_avatar': item.create_user.avatar
         })
 
     return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it',
                                               'articles': items,
                                               'categories': categories,
                                               'authors': authors,
+                                              'user': request.user,
                                               'count': count,
                                               'pager': pager,
                                               'total_pager': (int(count / size) + 1, int(count / size))[
@@ -101,6 +109,8 @@ def upload(request):
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.clean_file()
+            name = '%s%s%s' % (int(time.time()), request.user.id, os.path.splitext(file.name)[-1])
+            file.name = name
             model = UploadFile(create_user=request.user, name=file.name, type=file.content_type,
                                size=file.size, file=file)
             model.save()
@@ -139,8 +149,11 @@ def user_login(request):
         if form.is_valid() and ca.validate(form.clean_code()):
             user = authenticate(request, username=form.data['username'], password=form.data['password'])
             if user:
-                login(request, user)
-                return HttpResponseRedirect('/')
+                if user.authorized:
+                    login(request, user)
+                    return HttpResponseRedirect('/')
+                else:
+                    form.add_error('username', '账户邮箱未验证，请查阅邮件完成验证后登录')
             else:
                 form.add_error('username', '用户名或密码无效')
     return render(request, 'web/account.html', {
@@ -160,6 +173,12 @@ def user_register(request):
             username = form.data['username']
             password = form.data['password']
             UserInfo.objects.create_user(username, ip.get_client_ip(request), password)
+            # 发送电子邮件，进行身份验证
+            host = '%s://%s' % (request.scheme, request.get_host())
+            token = signing.dumps({'email': username, 'timestamp': int(time.time())},
+                                  base64.b64encode(settings.SECRET_KEY.encode('ascii')))
+            email.send_email_confirm(host, username, token)
+
             return HttpResponseRedirect('/login/', {'form': {
                 'username': username
             }})
@@ -170,7 +189,75 @@ def user_register(request):
     })
 
 
+# 用户中心
+@login_required
+def user_info(request):
+    form = UserEditor()
+    if request.user and request.user.is_authenticated:
+        if request.method == 'POST':
+            form = UserEditor(request.POST)
+            form.id = request.user.id
+            avatar = FileForm(request.POST, request.FILES)
+            if form.is_valid():
+                model = request.user
+                model.username = form.clean_username()
+                model.sex = form.clean_sex()
+                model.birthday = timezone.now().replace(year=timezone.now().year - form.clean_age()).date()
+                model.introduce = form.clean_introduction()
+                model.update_time = timezone.now()
+                if avatar.is_valid():
+                    file = avatar.clean_file()
+                    name = '%s%s%s' % (int(time.time()), request.user.id, os.path.splitext(file.name)[-1])
+                    file.name = name
+                    avatar_model = UploadFile(create_user=request.user, name=file.name, type=file.content_type,
+                                              size=file.size, file=file)
+                    avatar_model.save()
+                    model.avatar = avatar_model.file.url
+                model.save()
+                return HttpResponseRedirect('/')
+        else:
+            user = request.user
+            if not user.birthday:
+                user.birthday = timezone.now().replace(year=timezone.now().year - 23)
+            form = UserEditor({
+                'username': user.username,
+                'avatar': user.avatar,
+                'sex': user.sex,
+                'age': (timezone.now().date() - user.birthday),
+                'introduction': user.introduce
+            })
+    return render(request, 'web/userinfo.html', {
+        'user': form
+    })
+
+
+# 用户注册验证确认
+def user_confirm(request, token):
+    username = None
+    success = False
+    if token:
+        second = settings.EMAIL_CONFIRM_DAYS * 24 * 60 * 60
+        try:
+            data = signing.loads(s=token, key=base64.b64encode(settings.SECRET_KEY.encode('ascii')), max_age=second)
+            if data:
+                user = UserInfo.objects.first(email=data['email'])
+                if user and user.authorized is False:
+                    user.authorized = True
+                    UserInfo.save(user)
+                    username = user.email
+                    success = True
+        except signing.SignatureExpired:
+            pass
+        except signing.BadSignature:
+            pass
+    return render(request, 'web/confirm.html', {
+        'success': success,
+        'username': username
+    })
+
+
 # 注销
+@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/login/')

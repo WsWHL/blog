@@ -24,7 +24,7 @@ SECRET_KEY = '*!jgj69d9m3xg--qhhvtyumf8xh08bt!$+ci1$=w2mk$74k66='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.199.125']
 
 # Application definition
 
@@ -129,3 +129,12 @@ LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'web.UserInfo'
 # AUTHENTICATION_BACKENDS = ['web.utils.UserAuthenticate']
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PROT = '587'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_CONFIRM_DAYS = 3
+EMAIL_USE_TLS = True

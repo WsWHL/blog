@@ -87,3 +87,42 @@ class RegisterForm(forms.Form):
     def clean_code(self):
         code = self.cleaned_data['code']
         return code
+
+
+class UserEditor(forms.Form):
+    """
+    用户编辑信息表单
+    """
+
+    id = forms.IntegerField(required=False)
+    avatar = forms.CharField(required=False, empty_value='\\static\\images\\avatars\\xhr_7.jpg')
+    username = forms.CharField(required=True, min_length=4, max_length=50, initial='',
+                               error_messages={'required': '用户名不能为空'},
+                               widget=forms.TextInput(attrs={'placeholder': '请输入用户名'}))
+    sex = forms.IntegerField(required=False, min_value=-1, max_value=1, initial='',
+                             widget=forms.HiddenInput(attrs={'value': 1}))
+    age = forms.IntegerField(required=True, min_value=10, max_value=120, initial='',
+                             error_messages={'required': '年龄为必填项'})
+    introduction = forms.CharField(required=False, max_length=200, initial='',
+                                   widget=forms.Textarea(attrs={'rows': 3}))
+
+    def clean_avatar(self):
+        return self.cleaned_data['avatar']
+
+    def clean_username(self):
+        name = self.cleaned_data['username']
+        users = UserInfo.objects.filter(username=name).exclude(id=self.id)
+        if len(users) > 0:
+            raise forms.ValidationError('该用户名已被占用')
+        return self.cleaned_data['username']
+
+    def clean_sex(self):
+        if self.cleaned_data['sex']:
+            return 1
+        return 0
+
+    def clean_age(self):
+        return self.cleaned_data['age']
+
+    def clean_introduction(self):
+        return self.cleaned_data['introduction']

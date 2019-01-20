@@ -6,28 +6,6 @@ from django.contrib.auth.models import (
 )
 
 
-class UserManager(BaseUserManager):
-    """用户管理"""
-
-    def create_user(self, email, ip, password=None):
-        if not email:
-            raise ValueError('用户必须拥有邮箱地址')
-
-        user = self.model(
-            email=self.normalize_email(email),
-            ip=ip
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def get_deleted_user_id(self):
-        user = self.model().objects.get(username='delete')
-        if user:
-            return user.id
-        return -1
-
-
 class BaseManager(models.Manager):
     """自定义模型管理器"""
 
@@ -56,6 +34,30 @@ class BaseManager(models.Manager):
         model.save()
 
 
+class UserManager(BaseUserManager, BaseManager):
+    """用户管理"""
+
+    def create_user(self, email, ip, password=None):
+        if not email:
+            raise ValueError('用户必须拥有邮箱地址')
+
+        user = self.model(
+            email=self.normalize_email(email),
+            sex=-1,
+            birthday=timezone.now().replace(year=timezone.now().year - 23).date(),
+            ip=ip
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def get_deleted_user_id(self):
+        user = self.model().objects.get(username='delete')
+        if user:
+            return user.id
+        return -1
+
+
 class UserInfo(AbstractBaseUser):
     """用户信息"""
 
@@ -64,6 +66,7 @@ class UserInfo(AbstractBaseUser):
 
     id = models.BigAutoField(unique=True, primary_key=True, db_index=True)
     username = models.CharField(max_length=150, unique=True, null=True)
+    sex = models.SmallIntegerField(default=True)
     password = models.CharField(max_length=128)
     email = models.EmailField(unique=True, blank=True, max_length=254, null=True,
                               validators=[django.contrib.auth.validators.UnicodeUsernameValidator()])

@@ -6,12 +6,18 @@
         <div class="row column">
             <div class="media-object align-center-middle" style="height: 100px;">
                 <div class="media-object-section">
-                    <img src="https://placeimg.com/200/200/people?t=2"
-                         style="width: 80px;height: 80px;border-radius: 40px;">
+                    <a href="/user/">
+                        <img src="{{ user.avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
+                             style="width: 80px;height: 80px;border-radius: 40px;">
+                    </a>
                 </div>
                 <div class="media-object-section">
-                    <h4>孤独患者</h4>
-                    <p>丢失灵魂的肉体，七窍已坠入地狱。</p>
+                    {% if user and user.is_authenticated %}
+                        <h4>{{ user.username |default:user.email }}</h4>
+                        <p>{{ user.introduce }}</p>
+                    {% else %}
+                        <h4><a href="/login/">登录</a></h4>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -60,7 +66,7 @@
                             <div class="media-object align-middle">
                                 <div class="media-object-section show-for-medium">
                                     <div class="thumbnail">
-                                        <img src="https://placeimg.com/200/200/people?t=1"
+                                        <img src="{{ article.user_avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
                                              style="width: 100px;height: 100px;">
                                     </div>
                                 </div>

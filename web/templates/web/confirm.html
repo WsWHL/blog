@@ -1,0 +1,40 @@
+{% extends 'web/base/base.html' %}
+{% block title %}用户验证{% endblock %}
+
+{% block content %}
+    <div class="grid-y grid-frame">
+        <div class="media-object align-center-middle" style="height: 100%;">
+            <div class="media-object-section">
+                {% if success %}
+                    <img src="/static/images/icons/icon-ok.png">
+                {% else %}
+                    <img src="/static/images/icons/icon-error.png">
+                {% endif %}
+            </div>
+            <div class="media-object-section">
+                {% if success %}
+                    <p>邮箱验证成功！</p>
+                    <p><span id="times">5</span>秒后自动跳转<a href="/login?username={{ username }}">登录</a>页面。</p>
+                {% else %}
+                    <p>邮箱验证失败！</p>
+                    <p>请联系管理员或者尝试重新<a href="/register/">注册</a>！</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            var times = 5;
+            const timer = setInterval(() => {
+                document.getElementById('times').innerText = times;
+                times--;
+                if (times == 0) {
+                    clearTimeout(timer);
+                    window.location.href = '/login?username={{ username }}';
+                }
+            }, 1000)
+        })
+    </script>
+{% endblock %}
