@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: blog_db
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: blog
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+  web:
+    container_name: blog
+    build: .
+    command: python manage.py runserver 8000 
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
