@@ -2,4 +2,11 @@
 */migrations/000*.py
 */uploads/*
 **/__pycache__
-*.py
+
+.idea
+.git
+.gitignore
+.dockerignore
+docker-compose.yml
+Dockerfile
+README.md
