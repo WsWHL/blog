@@ -14,6 +14,7 @@ urlpatterns = [
                   path('code/', views.captcha_code, name='code'),
                   path('article/', views.article, name='article'),
                   path('article/<int:article_id>/', views.article, name='article_id'),
+                  path('article/delete/<int:article_id>/', views.delete_article, name='delete_article'),
                   path('upload/', views.upload, name='upload'),
                   path('reading/<int:article_id>/', views.reading, name='reading'),
                   path('user/', views.user_info, name='user'),

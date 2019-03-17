@@ -140,6 +140,19 @@ def reading(request, article_id):
     })
 
 
+# 删除文章
+def delete_article(request, article_id):
+    message = '你还有没有登录！'
+    if request.user and request.user.is_authenticated:
+        model = Article.objects.first(id=article_id)
+        if model and model.create_user.id == request.user.id:
+            model.is_deleted = True
+            Article.objects.save_new(model, request.user)
+            return JsonResponse({'isSuccess': True, 'message': '删除成功！'})
+        message = '你无权删除该文章！'
+    return JsonResponse({'isSuccess': False, 'message': message})
+
+
 # 登录
 def user_login(request):
     form = LoginFrom()
