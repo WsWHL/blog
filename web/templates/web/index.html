@@ -1,12 +1,26 @@
 {% extends "web/base/base.html" %}
 {% block title %}首页{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="/static/css/foundation-icons.css"/>
+    <style type="text/css">
+        .img-avatar {
+            position: relative;
+            display: block;
+        }
 
+        .btn-create {
+            position: fixed;
+            right: 8%;
+            bottom: 5%;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="callout large primary" id="banner">
         <div class="row column">
             <div class="media-object align-center-middle" style="height: 100px;">
                 <div class="media-object-section">
-                    <a href="/user/">
+                    <a class="img-avatar" href="/user/">
                         <img src="{{ user.avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
                              style="width: 80px;height: 80px;border-radius: 40px;">
                     </a>
@@ -137,6 +151,11 @@
             </div>
         {% endif %}
     </div>
+    <!-- menu -->
+    <a href="/article/" class="button btn-create">
+        <span class="show-for-x"></span>
+        <span aria-hidden="true"><i class="fi-pencil"></i></span>
+    </a>
     {% csrf_token %}
 {% endblock %}
 
