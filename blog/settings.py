@@ -119,10 +119,13 @@ USE_TZ = False
 # 静态文件本地绝对路径
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'web', 'static')
+# STATICFILES_DIRS = (
+#     os.path.normpath(os.path.join(BASE_DIR, 'web', 'static')),
+# )
 
 # 动态文件本地绝对路径
-MEDIA_URL = '/static/uploads/'
-MEDIA_ROOT = os.path.join(STATIC_ROOT, 'uploads')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'web', 'media')
 
 # 登录地址
 LOGIN_URL = '/login/'
@@ -133,7 +136,7 @@ AUTH_USER_MODEL = 'web.UserInfo'
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PROT = '587'
+EMAIL_PORT = '587'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_CONFIRM_DAYS = 3

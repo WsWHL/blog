@@ -7,12 +7,12 @@ class UploadAdapter {
     }
 
     upload() {
-        return new Promise((resolve, reject) => {
+        return this.loader.file.then(file => new Promise((resolve, reject) => {
             const loader = this.loader;
             const xhr = new XMLHttpRequest();
             // Prepare form data.
             const data = new FormData();
-            data.append('file', loader.file);
+            data.append('file', file);
             if (document.getElementsByName('csrfmiddlewaretoken').length > 0) {
                 data.append('csrfmiddlewaretoken', document.getElementsByName('csrfmiddlewaretoken')[0].value);
             } else {
@@ -22,7 +22,7 @@ class UploadAdapter {
             xhr.open('POST', this.url, true)
             xhr.contentType = 'json';
             xhr.responseType = 'json';
-            const genericError = this.t('a') + ` ${ loader.file.name }.`;
+            const genericError = this.t('a') + ` ${file.name}.`;
             xhr.addEventListener('error', () => reject(genericError))
             xhr.addEventListener('abort', () => reject());
             xhr.addEventListener('load', () => {
@@ -42,7 +42,7 @@ class UploadAdapter {
             }
             // Sed request
             xhr.send(data);
-        });
+        }));
     }
 
     abort() {

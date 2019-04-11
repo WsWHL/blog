@@ -19,4 +19,6 @@ urlpatterns = [
                   path('reading/<int:article_id>/', views.reading, name='reading'),
                   path('user/', views.user_info, name='user'),
                   path('confirm/<str:token>', views.user_confirm, name='confirm'),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# MEDIA
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

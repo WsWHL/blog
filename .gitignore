@@ -106,8 +106,8 @@ venv.bak/
 # idea
 .idea/
 
-# upload
-*/static/uploads/
+# media
+*/media/
 
 # migrations
 */migrations/*.py
