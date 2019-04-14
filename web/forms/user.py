@@ -95,14 +95,15 @@ class UserEditor(forms.Form):
     """
 
     id = forms.IntegerField(required=False)
-    avatar = forms.CharField(required=False, empty_value='\\static\\images\\avatars\\xhr_7.jpg')
+    avatar = forms.CharField(required=False, empty_value='/static/images/avatars/xhr_7.jpg')
     username = forms.CharField(required=True, min_length=4, max_length=50, initial='',
                                error_messages={'required': '用户名不能为空'},
                                widget=forms.TextInput(attrs={'placeholder': '请输入用户名'}))
     sex = forms.IntegerField(required=False, min_value=-1, max_value=1, initial='',
                              widget=forms.HiddenInput(attrs={'value': 1}))
-    age = forms.IntegerField(required=True, min_value=10, max_value=120, initial='',
-                             error_messages={'required': '年龄为必填项'})
+    birthday = forms.DateField(required=True,
+                               error_messages={'required': '请选择出生年月'},
+                               widget=forms.DateInput(format='%y-%m-%d'))
     introduction = forms.CharField(required=False, max_length=200, initial='',
                                    widget=forms.Textarea(attrs={'rows': 3}))
 
@@ -121,8 +122,8 @@ class UserEditor(forms.Form):
             return 1
         return 0
 
-    def clean_age(self):
-        return self.cleaned_data['age']
+    def clean_birthday(self):
+        return self.cleaned_data['birthday']
 
     def clean_introduction(self):
         return self.cleaned_data['introduction']

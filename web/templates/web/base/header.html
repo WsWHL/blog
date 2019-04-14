@@ -1,0 +1,34 @@
+<div data-sticky-container>
+    <div class="title-bar" data-sticky data-options="marginTop:0;" data-responsive-toggle="header-menu"
+         data-hide-for="medium"
+         data-top-anchor="1" data-btm-anchor="content:bottom">
+        <div class="title-bar-title">{{ request.user.username | default:'一只吃不胖的狗子' }}</div>
+        <div class="title-bar-right">
+            <button class="menu-icon" type="button" data-toggle="header-menu"></button>
+        </div>
+    </div>
+    <div class="top-bar" id="header-menu">
+        <div class="top-bar-left">
+            <ul class="menu" data-dropdown-menu>
+                <li class="show-for-medium">
+                    <a href="/user/" style="padding: 0;">
+                        <img src="{{ request.user.avatar | default:'/static/images/avatars/xhr_7.jpg' }} "
+                             style="width: 40px;height: 40px;border-radius: 20px;">
+                    </a>
+                </li>
+                <li><a href="/">首页</a></li>
+                <li><a href="#">时间轴</a></li>
+                <li><a href="#">技术杂谈</a></li>
+                <li><a href="/about/">关于</a></li>
+            </ul>
+        </div>
+        <div class="top-bar-right">
+            <ul class="menu">
+                <li><input type="search" placeholder="Search"></li>
+                <li>
+                    <button type="button" class="button">搜索</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

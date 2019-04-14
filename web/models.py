@@ -154,6 +154,7 @@ class Article(BaseModel):
     tag_ids = models.CharField(max_length=200, null=True)
     hits = models.IntegerField()
     score = models.DecimalField(max_digits=3, decimal_places=1)
+    topping = models.BooleanField(default=False)
 
 
 class UploadFile(BaseModel):

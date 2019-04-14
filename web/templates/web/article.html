@@ -1,36 +1,7 @@
 {% extends "web/base/base.html" %}
 {% block title %}博客编辑{% endblock %}
-
 {% block content %}
-    <div data-sticky-container>
-        <div class="title-bar" data-sticky data-options="marginTop:0;" data-responsive-toggle="header-menu"
-             data-hide-for="medium"
-             data-top-anchor="1" data-btm-anchor="content:bottom">
-            <div class="title-bar-title">孤独患者</div>
-            <div class="title-bar-right">
-                <button class="menu-icon" type="button" data-toggle="header-menu"></button>
-            </div>
-        </div>
-        <div class="top-bar" id="header-menu">
-            <div class="top-bar-left">
-                <ul class="menu" data-dropdown-menu>
-                    <li class="menu-text show-for-medium">孤独患者</li>
-                    <li><a href="/">首页</a></li>
-                    <li><a href="#">时间轴</a></li>
-                    <li><a href="#">技术杂谈</a></li>
-                    <li><a href="#">关于</a></li>
-                </ul>
-            </div>
-            <div class="top-bar-right">
-                <ul class="menu">
-                    <li><input type="search" placeholder="Search"></li>
-                    <li>
-                        <button type="button" class="button">搜索</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    {% include 'web/base/header.html' %}
     <br>
     <div class="grid-container" style="min-height:600px;">
         <div class="grid-x grid-margin-x">
@@ -80,7 +51,13 @@
                     <div class="column">
                         <p>置顶：</p>
                         <div class="switch medium">
-                            <input class="switch-input" id="topping" name="topping" type="checkbox">
+                            {% if article.topping.value %}
+                                <input class="switch-input" id="topping" name="topping" type="checkbox"
+                                       onclick="this.value=this.checked?1:0" checked>
+                            {% else %}
+                                <input class="switch-input" id="topping" name="topping" type="checkbox"
+                                       onclick="this.value=this.checked?1:0">
+                            {% endif %}
                             <label class="switch-paddle" for="topping">
                                 <span class="show-for-sr">是否置顶？</span>
                                 <span class="switch-active" aria-hidden="true">是</span>

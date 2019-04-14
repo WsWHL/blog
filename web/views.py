@@ -73,7 +73,7 @@ def article(request, article_id=0):
         if form.is_valid():
             category_ids = ','.join(str(i['id']) for i in form.get_categories().values('id'))
             model = Article(title=form.get_title(), subject=form.get_subject(), cover=form.get_cover(),
-                            content=form.get_content(), category_ids=category_ids,
+                            content=form.get_content(), category_ids=category_ids, topping=form.get_topping(),
                             tag_ids='', hits=0, score=0)
             if article_id > 0:
                 model.id = article_id
@@ -85,14 +85,15 @@ def article(request, article_id=0):
             'title': model.title,
             'subject': model.subject,
             'content': model.content,
-            'cover': model.cover
+            'cover': model.cover,
+            'topping': model.topping
         })
         category_ids = model.category_ids.split(',')
         for category in categories:
             if str(category['id']) in category_ids:
                 category['checked'] = 'checked'
-        if article_id <= 0 and model.id:
-            return HttpResponseRedirect('/article/%d/' % model.id, {
+        if request.method == 'POST' and model.id > 0:
+            return HttpResponseRedirect('/reading/%d/' % model.id, {
                 'article': form,
                 'categories': categories
             })
@@ -125,6 +126,7 @@ def reading(request, article_id):
         model = Article.objects.first(id=article_id)
         if model:
             data = {
+                'id': model.id,
                 'title': model.title,
                 'subject': model.subject,
                 'content': model.content,
@@ -135,6 +137,8 @@ def reading(request, article_id):
                 'create_user_email': model.create_user.email,
                 'create_time': model.create_time
             }
+            if request.user.is_authenticated and model.create_user.id is request.user.id:
+                data['isowner'] = True
     return render(request, 'web/reading.html', {
         'article': data
     })
@@ -215,7 +219,7 @@ def user_info(request):
                 model = request.user
                 model.username = form.clean_username()
                 model.sex = form.clean_sex()
-                model.birthday = timezone.now().replace(year=timezone.now().year - form.clean_age()).date()
+                model.birthday = form.clean_birthday()
                 model.introduce = form.clean_introduction()
                 model.update_time = timezone.now()
                 if avatar.is_valid():
@@ -236,7 +240,7 @@ def user_info(request):
                 'username': user.username,
                 'avatar': user.avatar,
                 'sex': user.sex,
-                'age': (timezone.now().date() - user.birthday),
+                'birthday': user.birthday,
                 'introduction': user.introduce
             })
     return render(request, 'web/userinfo.html', {
@@ -267,6 +271,11 @@ def user_confirm(request, token):
         'success': success,
         'username': username
     })
+
+
+# 关于
+def about(request):
+    return render(request, 'web/about.html')
 
 
 # 注销

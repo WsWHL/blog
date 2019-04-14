@@ -1,7 +1,6 @@
 {% extends "web/base/base.html" %}
 {% block title %}首页{% endblock %}
 {% block style %}
-    <link rel="stylesheet" href="/static/css/foundation-icons.css"/>
     <style type="text/css">
         .img-avatar {
             position: relative;
@@ -49,7 +48,7 @@
                                         <li class="is-active"><a href="/">首页</a></li>
                                         <li><a href="#">时间轴</a></li>
                                         <li><a href="#">技术杂谈</a></li>
-                                        <li><a href="#">关于</a></li>
+                                        <li><a href="/about/">关于</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -57,7 +56,7 @@
                                 <a href="/reading/{{ article.id }}/">{{ article.title }}</a>
                                 <small>{{ article.create_time|date:'d/m/Y' }}</small>
                             </h3>
-                            <img class="thumbnail" src="https://placehold.it/850x350">
+                            <img class="thumbnail" src="/static/images/banner.jpg">
                             <p>{{ article.subject }}</p>
                             <div class="callout">
                                 <ul class="menu simple">

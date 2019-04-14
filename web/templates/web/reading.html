@@ -2,8 +2,19 @@
 {% block title %}
     {{ article.title }}
 {% endblock %}
+{% block style %}
+    <style type="text/css">
+        .btn-create {
+            position: fixed;
+            right: 8%;
+            bottom: 5%;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
+    {% include 'web/base/header.html' %}
+    <br>
     <div class="grid-container">
         <div class="grid-x grid-margin-x">
             <div class="cell small-12 medium-12 large-8 large-offset-2">
@@ -23,4 +34,10 @@
             </div>
         </div>
     </div>
+    {% if article.isowner %}
+        <a href="/article/{{ article.id }}/" class="button btn-create">
+            <span class="show-for-x"></span>
+            <span aria-hidden="true"><i class="fi-pencil"></i></span>
+        </a>
+    {% endif %}
 {% endblock %}

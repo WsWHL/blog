@@ -6,7 +6,6 @@ class ArticleForm(forms.Form):
     """
     文章表单
     """
-
     title = forms.CharField(min_length=10, max_length=100, initial='',
                             error_messages={
                                 'required': '请输入文章标题',
@@ -26,6 +25,7 @@ class ArticleForm(forms.Form):
                                                 widget=forms.CheckboxSelectMultiple(),
                                                 queryset=Category.objects.filter(is_deleted=False)
                                                 .order_by('level', 'sort', 'create_time'))
+    topping = forms.BooleanField(required=False, initial='')
 
     def get_title(self):
         return self.cleaned_data['title']
@@ -41,3 +41,6 @@ class ArticleForm(forms.Form):
 
     def get_categories(self):
         return self.cleaned_data['categories']
+
+    def get_topping(self):
+        return self.cleaned_data['topping']

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>{% block title %}Blog{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/foundation.css">
+    <link rel="stylesheet" href="/static/css/foundation-icons.css"/>
     {% block style %}{% endblock %}
 </head>
 <body>
@@ -15,8 +16,11 @@
     <hr>
     <p class="text-center">
         ©2018
-        <a href="https://github.com/WsWHL/blog" target="_blank">Ws WHL.</a>
-        All Rights Reserved.</p>
+        <a href="https://github.com/WsWHL/blog" target="_blank">
+            <i class="fi-social-github"></i>
+            Ws WHL.</a>
+        All Rights Reserved.
+    </p>
 {% endblock %}
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/what-input.js"></script>

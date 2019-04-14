@@ -1,7 +1,11 @@
 {% extends 'web/base/base.html' %}
 {% block title %}用户信息{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="/static/css/foundation-datepicker.min.css">
+{% endblock %}
 
 {% block content %}
+    {% include 'web/base/header.html' %}
     <div class="grid-container">
         <br>
         <form action="#" method="post" enctype="multipart/form-data" data-abide>
@@ -11,7 +15,8 @@
                     <div class="media-object" style="height: 100px;">
                         <div class="media-object-section">
                             <label for="avatar">
-                                <img id="preview" src="{{ user.avatar.value|default:'\static\images\avatars\xhr_7.jpg' }}"
+                                <img id="preview"
+                                     src="{{ user.avatar.value|default:'/static/images/avatars/xhr_7.jpg' }}"
                                      class="thumbnail"
                                      style="width: 100px;height:100px;border-radius: 50px;">
                             </label>
@@ -29,8 +34,13 @@
                 <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
                     <label>性别：
                         <div class="switch medium">
-                            <input class="switch-input" id="switchSex" type="checkbox" name="sex"
-                                   value="{{ user.sex.value }}">
+                            {% if user.sex.value is 1 %}
+                                <input class="switch-input" id="switchSex" type="checkbox" name="sex"
+                                       value="{{ user.sex.value }}" onclick="this.value=this.checked?1:0" checked>
+                            {% else %}
+                                <input class="switch-input" id="switchSex" type="checkbox" name="sex"
+                                       value="{{ user.sex.value }}" onclick="this.value=this.checked?1:0">
+                            {% endif %}
                             <label class="switch-paddle" for="switchSex">
                                 <span class="switch-active" aria-hidden="true">女</span>
                                 <span class="switch-inactive" aria-hidden="true">男</span>
@@ -38,18 +48,11 @@
                         </div>
                     </label>
                 </div>
-                <div class="cell small-10 medium-8 large-6 medium-offset-1 large-offset-2">
-                    <label>年龄：
-                        <div class="slider" data-slider data-initial-start="23" data-end="120">
-                        <span class="slider-handle" data-slider-handle role="slider" tabindex="1"
-                              aria-controls="sliderAge"></span>
-                            <span class="slider-fill" data-slider-fill></span>
-                        </div>
-                    </label>
-                </div>
-                <div class="cell small-2 medium-3 large-1">
-                    <label>&nbsp;&nbsp;&nbsp;
-                        <input type="number" id="sliderAge" name="age" value="{{ user.age.value }}" required>
+                <div class="cell small-12 medium-4 large-2 medium-offset-1 large-offset-2">
+                    <label>生日：
+                        <input id="birthday" name="birthday" size="16" type="text"
+                               value="{{ user.birthday.value | date:'Y-m-d' }}"
+                               data-date-format="yyyy-mmm-dd" readonly>
                     </label>
                 </div>
                 <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
@@ -66,6 +69,8 @@
     </div>
 {% endblock %}
 {% block script %}
+    <script type="text/javascript" src="/static/js/foundation-datepicker.min.js"></script>
+    <script type="text/javascript" src="/static/js/locales/foundation-datepicker.zh-CN.js"></script>
     <script type="text/javascript" src="/static/js/script.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -81,6 +86,16 @@
                 }
                 reader.readAsDataURL(this.files[0]);
             });
+            // 初始化日期控件
+            $("#birthday").fdatepicker({
+                format: 'yyyy-mm-dd',
+                language: 'zh-CN',
+                pickTime: false,
+                leftArrow: '<i class="fi-arrow-left"></i>',
+                rightArrow: '<i class="fi-arrow-right"></i>',
+                startDate: '1900-1-1',
+                endDate: new Date()
+            })
         });
     </script>
 {% endblock %}
