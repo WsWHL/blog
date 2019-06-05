@@ -10,8 +10,7 @@ import random
 from math import ceil
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
-
-current_path = os.path.normpath(os.path.dirname(__file__))
+from django.conf import settings
 
 
 class captcha(object):
@@ -83,7 +82,7 @@ class captcha(object):
         """把生成的验证码图片改成数据流返回"""
         self.font_colors = ['black', 'darkblue', 'darkred']
         self.background = self._get_random_color(230)
-        self.font_path = os.path.join(current_path, 'static/fonts/', 'FiraCode-Retina.ttf')
+        self.font_path = os.path.join(settings.STATIC_ROOT, 'fonts', 'FiraCode-Retina.ttf')
 
         # 生成的验证码只做一次验证
         self.django_request.session[self.session_key] = ''

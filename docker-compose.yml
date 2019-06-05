@@ -12,13 +12,20 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "3307:3306"
+  redis:
+    container_name: blog_cache
+    restart: always
+    image: redis:latest
+    ports:
+      - "6380:6379"
   web:
     container_name: blog
     build: .
-    command: python manage.py runserver 8000 
+    command: python3 manage.py runserver 0.0.0.0:8000 
     volumes:
       - .:/usr/src/app/
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - redis

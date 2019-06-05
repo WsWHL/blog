@@ -99,12 +99,14 @@ venv.bak/
 
 # mkdocs documentation
 /site
+*.DS_Store
 
 # mypy
 .mypy_cache/
 
 # idea
 .idea/
+.vscode/
 
 # media
 */media/

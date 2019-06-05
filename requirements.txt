@@ -3,3 +3,4 @@ mysqlclient==1.4.0
 Pillow==5.4.1
 pylint==2.2.2
 PyMySQL==0.9.3
+django-redis==4.10.0

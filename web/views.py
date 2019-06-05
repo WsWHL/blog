@@ -12,6 +12,8 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.conf import settings
 
+from web.cache import CacheArticles
+
 from web.forms import *
 from web.models import UserInfo, UploadFile, Article, Category
 from web.utils import ip, email
@@ -24,11 +26,12 @@ def index(request, user_id=0, pager=0, size=20):
     if request.user.is_authenticated:
         title = request.user.email
     if user_id and user_id > 0:
-        articles = Article.objects.filter(create_user_id=user_id, is_deleted=False).order_by('create_time', 'id')[
-                   pager:size]
+        articles = Article.objects.filter(create_user_id=user_id, is_deleted=False).order_by('-topping',
+                                                                                             '-create_time',
+                                                                                             'id')[pager:size]
         count = Article.objects.filter(create_user_id=user_id, is_deleted=False).count()
     else:
-        articles = Article.objects.filter(is_deleted=False).order_by('create_time', 'id')[pager:size]
+        articles = Article.objects.filter(is_deleted=False).order_by('-topping', '-create_time', 'id')[pager:size]
         count = Article.objects.filter(is_deleted=False).count()
     items = []
     categories = Category.objects.filter(is_deleted=False).order_by('level', 'sort', 'create_time')
@@ -123,22 +126,25 @@ def upload(request):
 def reading(request, article_id):
     data = None
     if article_id and article_id > 0:
-        model = Article.objects.first(id=article_id)
-        if model:
-            data = {
-                'id': model.id,
-                'title': model.title,
-                'subject': model.subject,
-                'content': model.content,
-                'cover': model.cover,
-                'category_ids': model.category_ids,
-                'tag_ids': model.tag_ids,
-                'create_user_id': model.create_user.id,
-                'create_user_email': model.create_user.email,
-                'create_time': model.create_time
-            }
-            if request.user.is_authenticated and model.create_user.id is request.user.id:
-                data['isowner'] = True
+        data = CacheArticles.get(article_id)
+        if data is None:
+            model = Article.objects.first(id=article_id)
+            if model:
+                data = {
+                    'id': model.id,
+                    'title': model.title,
+                    'subject': model.subject,
+                    'content': model.content,
+                    'cover': model.cover,
+                    'category_ids': model.category_ids,
+                    'tag_ids': model.tag_ids,
+                    'create_user_id': model.create_user.id,
+                    'create_user_email': model.create_user.email,
+                    'create_time': model.create_time.strftime('%Y年%m月%d日 %H:%M:%S')
+                }
+                CacheArticles.set(article_id, data)
+        if request.user.is_authenticated and data['create_user_id'] is request.user.id:
+            data['isowner'] = True
     return render(request, 'web/reading.html', {
         'article': data
     })
@@ -150,6 +156,7 @@ def delete_article(request, article_id):
     if request.user and request.user.is_authenticated:
         model = Article.objects.first(id=article_id)
         if model and model.create_user.id == request.user.id:
+            CacheArticles.delete(article_id)
             model.is_deleted = True
             Article.objects.save_new(model, request.user)
             return JsonResponse({'isSuccess': True, 'message': '删除成功！'})
@@ -168,13 +175,14 @@ def user_login(request):
             if user:
                 if user.authorized:
                     login(request, user)
-                    return HttpResponseRedirect('/')
+                    return HttpResponseRedirect(request.GET.get('next', '/'))
                 else:
                     form.add_error('username', '账户邮箱未验证，请查阅邮件完成验证后登录')
             else:
                 form.add_error('username', '用户名或密码无效')
     return render(request, 'web/account.html', {
         'is_login': 'is-active',
+        'next': request.GET.get('next', '/'),
         'login': form,
         'register': RegisterForm(),
     })
@@ -201,6 +209,7 @@ def user_register(request):
             }})
     return render(request, 'web/account.html', {
         'is_register': 'is-active',
+        'next': request.GET.get('next', '/'),
         'register': form,
         'login': LoginFrom()
     })

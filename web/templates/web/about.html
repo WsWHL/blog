@@ -1,6 +1,70 @@
 {% extends "web/base/base.html" %}
 {% block title %}关于{% endblock %}
+{% block style %}
+    <style type="text/css">
+        #user_right {
+            border-left: 2px solid #cacaca;
+        }
+
+    </style>
+{% endblock %}
 
 {% block content %}
     {% include 'web/base/header.html' %}
+    <br>
+    <div class="grid-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-3 large-2 medium-offset-1 large-offset-1 show-for-medium">
+                <div class="media-object align-center" style="height: 100px;">
+                    <div class="media-object-section">
+                        <img src="/static/images/avatars/xhr_7.jpg" class="thumbnail"
+                             style="width: 100px;height:100px;border-radius: 50px;">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p>王海林</p>
+                </div>
+            </div>
+            <div id="user_right" class="cell small-12 medium-7 large-8">
+                <h5 class="text-center">关于作者</h5>
+                <div>
+                    <p class="hide-for-medium">王海林</p>
+                    <p>男</p>
+                    <p>25岁</p>
+                    <p>2～3年</p>
+                    <p>互联网开发工程师</p>
+                    <p>
+                        <span class="label primary">C#</span>
+                        <span class="label alert">Python</span>
+                        <span class="label success">Java</span>
+                        <span class="label warning">Java Script</span>
+                        <span class="label secondary">CSS</span>
+                        <span class="label primary">SQL</span>
+                    </p>
+                </div>
+                <h5 class="text-center">网站宗旨</h5>
+                <div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    个人博客网站，记录工作经验，总结遇到的各种问题及解决方案。或写一些个人心得和感悟，对于自己实战中的经验还会分享一些干货，
+                    如有不足或错误之处还望指正。
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    本站源码见Copyright GitHub开放源代码，如对本站感兴趣欢迎访问，记得点击Star哟！
+                </div>
+                <br>
+                <h5 class="text-center">网站介绍</h5>
+                <fieldset class="fieldset">
+                    <legend>开发</legend>
+                    <p>编程语言：Python(3.x)</p>
+                    <p>框架：Django、Foundation</p>
+                    <p>数据库：my sql</p>
+                </fieldset>
+                <fieldset class="fieldset">
+                    <legend>部署</legend>
+                    <p>系统：CentOS 7</p>
+                    <p>服务：wsgi、nginx</p>
+                </fieldset>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,5 +1,12 @@
 {% extends "web/base/base.html" %}
 {% block title %}博客编辑{% endblock %}
+{% block style %}
+    <style type="text/css">
+        .ck-content {
+            min-height: 500px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     {% include 'web/base/header.html' %}
     <br>
@@ -82,7 +89,7 @@
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 name: 'content',
-                language: 'zh',
+                language: 'zh-cn',
                 image: {
                     toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
                     styles: ['full', 'side']
