@@ -27,6 +27,4 @@ class CacheArticles:
     @classmethod
     def delete(cls, article_id: id):
         key = cls.key_prefix(article_id)
-        if cls.db.exists(key):
-            return cls.db.delete(key) == 1
-        return False
+        return cls.db.delete(key) == 1

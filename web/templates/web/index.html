@@ -1,4 +1,5 @@
 {% extends "web/base/base.html" %}
+{% load filter_extras %}
 {% block title %}首页{% endblock %}
 {% block style %}
     <style type="text/css">
@@ -26,7 +27,7 @@
                 </div>
                 <div class="media-object-section">
                     {% if user and user.is_authenticated %}
-                        <h4>{{ user.username |default:user.email }}</h4>
+                        <h4>{{ user.username |default:user.email|usersafe }}</h4>
                         <p>{{ user.introduce }}</p>
                     {% else %}
                         <h4><a href="/login/">登录</a></h4>
@@ -62,7 +63,7 @@
                                 <ul class="menu simple">
                                     <li>
                                         <a href="/index/u{{ article.create_user_id }}">
-                                            Author: {{ article.create_user_name }}
+                                            Author: {{ article.create_user_name |usersafe }}
                                         </a>
                                     </li>
                                     <li><a href="#">Comments: {{ article.hits }}</a></li>
@@ -123,7 +124,7 @@
                             <ul>
                                 {% for author in authors %}
                                     <li>
-                                        <a href="/index/u{{ author.create_user__id }}">{{ author.create_user__username | default:author.create_user__email }}</a>
+                                        <a href="/index/u{{ author.create_user__id }}">{{ author.create_user__username | default:author.create_user__email | usersafe }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>

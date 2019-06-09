@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from .logger import LOGGING
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*!jgj69d9m3xg--qhhvtyumf8xh08bt!$+ci1$=w2mk$74k66='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -46,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'blog.middleware.exception.ExceptionLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'blog.urls'
@@ -74,11 +76,11 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'blog',
+        'NAME': os.getenv('MYSQL_DATABASE', 'blog'),
         'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': 'db',
-        'PORT': '3306'
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', '123456'),
+        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
+        'PORT': os.getenv('MYSQL_PORT', '3306')
     }
 }
 
@@ -86,7 +88,11 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/0',
+        'LOCATION': 'redis://%s:%s/%s' % (
+            os.getenv('REDIS_HOST', '127.0.0.1'),
+            os.getenv('REDIS_PORT', '6379'),
+            os.getenv('REDIS_DB', '0')
+        ),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'SOCKET_CONNECT_TIMEOUT': 5,
@@ -140,9 +146,7 @@ USE_TZ = False
 # 静态文件本地绝对路径
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'web', 'static')
-# STATICFILES_DIRS = (
-#     os.path.normpath(os.path.join(BASE_DIR, 'web', 'static')),
-# )
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'web', 'static')]
 
 # 动态文件本地绝对路径
 MEDIA_URL = '/media/'
@@ -152,13 +156,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'web', 'media')
 LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = 'web.UserInfo'
-# AUTHENTICATION_BACKENDS = ['web.utils.UserAuthenticate']
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+ADMINS = (('dev', os.getenv('EMAIL_USER')))
 EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = '587'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 EMAIL_CONFIRM_DAYS = 3
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = EMAIL_HOST_USER

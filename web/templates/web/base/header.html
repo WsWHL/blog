@@ -1,8 +1,13 @@
+{% load filter_extras %}
 <div data-sticky-container>
     <div class="title-bar" data-sticky data-options="marginTop:0;" data-responsive-toggle="header-menu"
          data-hide-for="medium"
          data-top-anchor="1" data-btm-anchor="content:bottom">
-        <div class="title-bar-title">{{ request.user.username | default:'一只吃不胖的狗子' }}</div>
+        {% if request.user and request.user.is_authenticated %}
+        <div class="title-bar-title">{{ request.user.username| default:request.user.email | usersafe }}</div>
+        {% else%}
+        <div class="title-bar-title">SoulMate</div>
+        {% endif %}
         <div class="title-bar-right">
             <button class="menu-icon" type="button" data-toggle="header-menu"></button>
         </div>

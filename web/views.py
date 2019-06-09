@@ -1,6 +1,7 @@
 import os
 import time
 import base64
+import logging
 
 from django.contrib.auth import (
     authenticate, login, logout
@@ -19,8 +20,11 @@ from web.models import UserInfo, UploadFile, Article, Category
 from web.utils import ip, email
 from web.utils.captcha import captcha
 
+logger = logging.getLogger(__name__)
 
 # 首页
+
+
 def index(request, user_id=0, pager=0, size=20):
     title = '欢迎来到本站'
     if request.user.is_authenticated:
@@ -29,21 +33,24 @@ def index(request, user_id=0, pager=0, size=20):
         articles = Article.objects.filter(create_user_id=user_id, is_deleted=False).order_by('-topping',
                                                                                              '-create_time',
                                                                                              'id')[pager:size]
-        count = Article.objects.filter(create_user_id=user_id, is_deleted=False).count()
+        count = Article.objects.filter(
+            create_user_id=user_id, is_deleted=False).count()
     else:
-        articles = Article.objects.filter(is_deleted=False).order_by('-topping', '-create_time', 'id')[pager:size]
+        articles = Article.objects.filter(is_deleted=False).order_by(
+            '-topping', '-create_time', 'id')[pager:size]
         count = Article.objects.filter(is_deleted=False).count()
     items = []
     categories = Category.objects.filter(is_deleted=False).order_by('level', 'sort', 'create_time')
     authors = Article.objects.values('create_user__id', 'create_user__username', 'create_user__email').distinct()
     for item in articles:
+        categoryids = item.category_ids.split(',')
         items.append({
             'id': item.id,
             'title': item.title,
             'subject': item.subject,
             'cover': item.cover,
-            'tags': ['Python', '高并发'],
-            'categories': ['大数据'],
+            'tags': [],
+            'categories': [],
             'hits': 99,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
@@ -74,13 +81,15 @@ def article(request, article_id=0):
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
-            category_ids = ','.join(str(i['id']) for i in form.get_categories().values('id'))
+            category_ids = ','.join(str(i['id'])
+                                    for i in form.get_categories().values('id'))
             model = Article(title=form.get_title(), subject=form.get_subject(), cover=form.get_cover(),
                             content=form.get_content(), category_ids=category_ids, topping=form.get_topping(),
                             tag_ids='', hits=0, score=0)
             if article_id > 0:
                 model.id = article_id
             Article.objects.save_new(model, request.user)
+            CacheArticles.delete(model.id)
     elif article_id > 0:
         model = Article.objects.first(id=article_id)
     if model:
@@ -113,12 +122,13 @@ def upload(request):
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.clean_file()
-            name = '%s%s%s' % (int(time.time()), request.user.id, os.path.splitext(file.name)[-1])
+            name = '%s%s%s' % (int(time.time()), request.user.id,
+                               os.path.splitext(file.name)[-1])
             file.name = name
             model = UploadFile(create_user=request.user, name=file.name, type=file.content_type,
                                size=file.size, file=file)
             model.save()
-            return JsonResponse({'uploaded': True, 'url': model.file.url});
+            return JsonResponse({'uploaded': True, 'url': model.file.url})
     return JsonResponse({'uploaded': False, 'error': {'message': '请求方式错误！'}})
 
 
@@ -171,7 +181,8 @@ def user_login(request):
         form = LoginFrom(request.POST)
         ca = captcha(request)
         if form.is_valid() and ca.validate(form.clean_code()):
-            user = authenticate(request, username=form.data['username'], password=form.data['password'])
+            user = authenticate(
+                request, username=form.data['username'], password=form.data['password'])
             if user:
                 if user.authorized:
                     login(request, user)
@@ -197,12 +208,14 @@ def user_register(request):
         if form.is_valid() and ca.validate(form.clean_code()):
             username = form.data['username']
             password = form.data['password']
-            UserInfo.objects.create_user(username, ip.get_client_ip(request), password)
+            UserInfo.objects.create_user(
+                username, ip.get_client_ip(request), password)
             # 发送电子邮件，进行身份验证
             host = '%s://%s' % (request.scheme, request.get_host())
             token = signing.dumps({'email': username, 'timestamp': int(time.time())},
                                   base64.b64encode(settings.SECRET_KEY.encode('ascii')))
             email.send_email_confirm(host, username, token)
+            logger.info('用户(%s)注册确认邮件已发送!\nToken:%s' % (username, token))
 
             return HttpResponseRedirect('/login/', {'form': {
                 'username': username
@@ -233,7 +246,8 @@ def user_info(request):
                 model.update_time = timezone.now()
                 if avatar.is_valid():
                     file = avatar.clean_file()
-                    name = '%s%s%s' % (int(time.time()), request.user.id, os.path.splitext(file.name)[-1])
+                    name = '%s%s%s' % (
+                        int(time.time()), request.user.id, os.path.splitext(file.name)[-1])
                     file.name = name
                     avatar_model = UploadFile(create_user=request.user, name=file.name, type=file.content_type,
                                               size=file.size, file=file)
@@ -264,7 +278,8 @@ def user_confirm(request, token):
     if token:
         second = settings.EMAIL_CONFIRM_DAYS * 24 * 60 * 60
         try:
-            data = signing.loads(s=token, key=base64.b64encode(settings.SECRET_KEY.encode('ascii')), max_age=second)
+            data = signing.loads(s=token, key=base64.b64encode(
+                settings.SECRET_KEY.encode('ascii')), max_age=second)
             if data:
                 user = UserInfo.objects.first(email=data['email'])
                 if user and user.authorized is False:

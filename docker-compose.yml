@@ -21,9 +21,12 @@ services:
   web:
     container_name: blog
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000 
+    command: python manage.py runserver 0.0.0.0:8000 
+    env_file: .venv
     volumes:
       - .:/usr/src/app/
+      - ./static:/static
+      - ./media:/media
     ports:
       - "8000:8000"
     depends_on:

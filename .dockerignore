@@ -1,6 +1,7 @@
 *venv
 */migrations/000*.py
 */uploads/*
+*/media/*
 **/__pycache__
 
 .idea
