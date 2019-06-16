@@ -20,12 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*!jgj69d9m3xg--qhhvtyumf8xh08bt!$+ci1$=w2mk$74k66='
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = int(os.getenv('DEBUG', 1))
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [os.getenv('DOMAIN', '*')]
+CSRF_TRUSTED_ORIGINS = [os.getenv('DOMAIN', 'localhost')]
 
 # Application definition
 
@@ -159,11 +160,11 @@ AUTH_USER_MODEL = 'web.UserInfo'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-ADMINS = (('dev', os.getenv('EMAIL_USER')))
+ADMINS = (('dev', os.getenv('EMAIL_USER', '923952105@qq.com')))
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
-EMAIL_HOST_USER = os.getenv('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_USER', '923952105@qq.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD', 'lmnhuxpmhdsebegh')
 EMAIL_CONFIRM_DAYS = 3
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = EMAIL_HOST_USER

@@ -40,8 +40,10 @@ def index(request, user_id=0, pager=0, size=20):
             '-topping', '-create_time', 'id')[pager:size]
         count = Article.objects.filter(is_deleted=False).count()
     items = []
-    categories = Category.objects.filter(is_deleted=False).order_by('level', 'sort', 'create_time')
-    authors = Article.objects.values('create_user__id', 'create_user__username', 'create_user__email').distinct()
+    categories = Category.objects.filter(
+        is_deleted=False).order_by('level', 'sort', 'create_time')
+    authors = Article.objects.values(
+        'create_user__id', 'create_user__username', 'create_user__email').distinct()
     for item in articles:
         categoryids = item.category_ids.split(',')
         items.append({
@@ -54,7 +56,7 @@ def index(request, user_id=0, pager=0, size=20):
             'hits': 99,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
-            'create_user_name': item.create_user.email,
+            'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username==''],
             'update_time': item.update_time,
             'user_avatar': item.create_user.avatar
         })
@@ -149,7 +151,7 @@ def reading(request, article_id):
                     'category_ids': model.category_ids,
                     'tag_ids': model.tag_ids,
                     'create_user_id': model.create_user.id,
-                    'create_user_email': model.create_user.email,
+                    'create_user_email': (model.create_user.username, model.create_user.email)[model.create_user.username==''],
                     'create_time': model.create_time.strftime('%Y年%m月%d日 %H:%M:%S')
                 }
                 CacheArticles.set(article_id, data)

@@ -1,9 +1,12 @@
-*venv
+*env
 */migrations/000*.py
 */uploads/*
 */media/*
 **/__pycache__
+*.log
 
+.DS_Store
+.vscode
 .idea
 .git
 .gitignore

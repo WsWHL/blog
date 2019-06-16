@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 18-9-16 下午1:55
-# @Author  : whl
-# @File    : captcha.py
-# @Software: PyCharm
-
 import os
 import random
 from math import ceil

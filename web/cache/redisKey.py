@@ -13,3 +13,4 @@ class RedisKey:
 CACHE_USER_INFO = RedisKey(prefix='user:%d', ex=20 * 60)
 CACHE_ARTICLE = RedisKey(prefix='article:%d', ex=20 * 60)
 CACHE_ARTICLES = RedisKey(prefix='articles:%s', ex=24 * 60 * 60)
+CACHE_ARTICLE_READING = RedisKey(prefix='article:reading:%d', ex=20 * 60)

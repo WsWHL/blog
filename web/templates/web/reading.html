@@ -1,4 +1,5 @@
 {% extends 'web/base/base.html' %}
+{% load filter_extras %}
 {% block title %}
     {{ article.title }}
 {% endblock %}
@@ -27,7 +28,7 @@
                     {% endautoescape %}
                     <br>
                     <p>
-                        作者：<a href="/index/u{{ article.create_user_id }}">{{ article.create_user_email }}</a>
+                        作者：<a href="/index/u{{ article.create_user_id }}">{{ article.create_user_email | usersafe }}</a>
                         <span class="float-right">{{ article.create_time }}</span>
                     </p>
                 </div>

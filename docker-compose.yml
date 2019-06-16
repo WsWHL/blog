@@ -1,34 +1,55 @@
-version: '3.1'
+version: "3.1"
 
 services:
   db:
     container_name: blog_db
-    image: mysql
+    image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_DATABASE: blog
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: 123456
+    volumes: 
+      - mysql-blog:/var/lib/mysql
     ports:
-      - "3307:3306"
+      - 3307:3306
   redis:
     container_name: blog_cache
-    restart: always
     image: redis:latest
+    restart: always
     ports:
-      - "6380:6379"
+      - 6380:6379
+  nginx:
+    container_name: blog_server
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - staticfiles:/usr/src/app/static
+      - mediafiles:/usr/src/app/media
+      - ~/.certs:/etc/nginx/certs
+    ports:
+      - 443:443
+      - 80:80
+    depends_on:
+      - web
   web:
     container_name: blog
     build: .
-    command: python manage.py runserver 0.0.0.0:8000 
+    command: uwsgi -i uwsgi.ini
+    restart: always
     env_file: .venv
-    volumes:
-      - .:/usr/src/app/
-      - ./static:/static
-      - ./media:/media
+    volumes: 
+      - staticfiles:/usr/src/app/web/static
+      - mediafiles:/usr/src/app/web/media
     ports:
-      - "8000:8000"
+      - 8000
     depends_on:
       - db
       - redis
+
+volumes: 
+  staticfiles:
+  mediafiles:
+  mysql-blog:

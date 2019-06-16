@@ -11,6 +11,7 @@ class CacheArticles:
 
     db = cache
     key_prefix = redisKey.CACHE_ARTICLE
+    key_prefix_reading = redisKey.CACHE_ARTICLE_READING
 
     @classmethod
     def get(cls, article_id: id):
@@ -21,10 +22,14 @@ class CacheArticles:
     @classmethod
     def set(cls, article_id: id, article_dict: dict):
         key = cls.key_prefix(article_id)
-        # data = json.dumps(article_dict, ensure_ascii=False)
         cls.db.set(key, article_dict, cls.key_prefix.ex)
 
     @classmethod
     def delete(cls, article_id: id):
         key = cls.key_prefix(article_id)
         return cls.db.delete(key) == 1
+
+    @classmethod
+    def reading(cls, article_id: id):
+        key = cls.key_prefix_reading(article_id)
+        return cls.db.incr(key)

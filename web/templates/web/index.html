@@ -99,7 +99,7 @@
                                         </h5>
                                         <p>{{ article.subject }}</p>
                                         <p>作者：
-                                            <a href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name }}</a>
+                                            <a href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name | usersafe }}</a>
                                             <span class="float-right">{{ article.create_time|date:'Y/m/d H:i:s' }}</span>
                                         </p>
                                     </div>
