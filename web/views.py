@@ -130,8 +130,8 @@ def upload(request):
             model = UploadFile(create_user=request.user, name=file.name, type=file.content_type,
                                size=file.size, file=file)
             model.save()
-            return JsonResponse({'uploaded': True, 'url': model.file.url})
-    return JsonResponse({'uploaded': False, 'error': {'message': '请求方式错误！'}})
+            return JsonResponse({'success': 1, 'url': model.file.url, 'message': '上传成功!'})
+    return JsonResponse({'success': 0, 'message': '上传失败!'})
 
 
 # 阅读文章

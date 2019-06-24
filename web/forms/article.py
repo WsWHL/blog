@@ -6,7 +6,7 @@ class ArticleForm(forms.Form):
     """
     文章表单
     """
-    title = forms.CharField(min_length=10, max_length=100, initial='',
+    title = forms.CharField(min_length=8, max_length=100, initial='',
                             error_messages={
                                 'required': '请输入文章标题',
                                 'min_length': '标题内容至少10个字符',

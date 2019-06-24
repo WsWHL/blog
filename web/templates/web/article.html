@@ -1,18 +1,14 @@
 {% extends "web/base/base.html" %}
 {% block title %}博客编辑{% endblock %}
 {% block style %}
-    <style type="text/css">
-        .ck-content {
-            min-height: 500px;
-        }
-    </style>
+<link rel="stylesheet" href="/static/css/editormd.min.css" />
 {% endblock %}
 {% block content %}
     {% include 'web/base/header.html' %}
     <br>
     <div class="grid-container" style="min-height:600px;">
         <div class="grid-x grid-margin-x">
-            <div class="cell small-12 medium-10 large-8 medium-offset-1 large-offset-2">
+            <div class="cell small-12 medium-10 large-10 medium-offset-1 large-offset-1">
                 <form action="#" method="post" enctype="multipart/form-data" data-abide novalidate>
                     {% csrf_token %}
                     <div class="column">
@@ -50,9 +46,9 @@
                         </div>
                     {% endif %}
                     <div class="column">
-                    <textarea id="editor" name="content">
-                        {{ article.content.value }}
-                    </textarea>
+                    <div id="editor">
+                    <textarea style="display:none;">{{ article.content.value }}</textarea>
+                    </div>
                     </div>
                     <br>
                     <div class="column">
@@ -83,28 +79,39 @@
 {% endblock %}
 
 {% block script %}
-    <script type="text/javascript" src="/static/js/ckeditor.js"></script>
-    <script type="text/javascript" src="/static/js/ckeditor-custom.js"></script>
+    <script type="text/javascript" src="/static/js/editormd.min.js"></script>
+    <script type="text/javascript" src="/static/js/languages/zh-tw.js"></script>
     <script type="text/javascript">
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
-                name: 'content',
-                language: 'zh-cn',
-                image: {
-                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-                    styles: ['full', 'side']
+        $(function(){
+            var editor = editormd('editor', {
+                name:'content',
+                width:'100%',
+                height:800,
+                placeholder:'请编写你的文章内容.',
+                codeFold:true,
+                watch:false,
+                toolbarAutoFixed:true,
+                emoji:true,
+                tex:true,
+                imageUpload:true,
+                imageFormats:["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL:'/upload/',
+                csrftoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                crossDomainUploadz:true,
+                uploadCallbackURL:'',
+                fileName: 'file',
+                path:'/static/lib/',
+                pluginPath:'/static/js/plugins/',
+                lang:{
+                    lang:'zh-tw'
                 },
-                ckfinder: {
-                    uploadUrl: '/upload/'
+                onfullscreen: function(){
+                    $('.switch').hide();
+                },
+                onfullscreenExit: function(){
+                    $('.switch').show();
                 }
-            })
-            .then(editor => {
-                editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                    return new UploadAdapter(loader, editor.config.get('ckfinder.uploadUrl'), editor.t)
-                };
-            })
-            .catch(error => {
-                console.error(error);
             });
+        });
     </script>
 {% endblock %}

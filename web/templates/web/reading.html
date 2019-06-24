@@ -4,6 +4,7 @@
     {{ article.title }}
 {% endblock %}
 {% block style %}
+    <link rel="stylesheet" href="/static/css/editormd.preview.min.css" />
     <style type="text/css">
         .btn-create {
             position: fixed;
@@ -18,14 +19,17 @@
     <br>
     <div class="grid-container">
         <div class="grid-x grid-margin-x">
-            <div class="cell small-12 medium-12 large-8 large-offset-2">
+            <div id="toc-menu" class="cell medium-2 large-2 show-for-medium">
+            </div>
+            <div class="cell small-12 medium-10 large-8 large-offset-1">
                 <div class="callout">
                     <h3 class="text-center">{{ article.title }}</h3>
                     <p class="text-center">{{ article.subject }}</p>
                     <br>
-                    {% autoescape off %}
-                        {{ article.content }}
-                    {% endautoescape %}
+                    <div id="markdown-view">
+                        <!-- Server-side output Markdown text -->
+                        <textarea style="display:none;">{{ article.content }}</textarea>
+                    </div>
                     <br>
                     <p>
                         作者：<a href="/index/u{{ article.create_user_id }}">{{ article.create_user_email | usersafe }}</a>
@@ -41,4 +45,21 @@
             <span aria-hidden="true"><i class="fi-pencil"></i></span>
         </a>
     {% endif %}
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="/static/js/editormd.min.js"></script>
+<script type="text/javascript" src="/static/lib/marked.min.js"></script>
+<script type="text/javascript" src="/static/lib/prettify.min.js"></script>
+<script>
+    $(function(){
+        var mkview = editormd.markdownToHTML('markdown-view',{
+            emoji:true,
+            tex  : true,
+            toc: true,
+            tocContainer:"#toc-menu"
+            //htmlDecode:true,
+            //htmlDecode:"style,script,iframe"
+        });
+    });
+</script>
 {% endblock %}
