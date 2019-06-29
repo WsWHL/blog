@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',
     'web.apps.WebConfig',
 ]
 
@@ -82,6 +83,15 @@ DATABASES = {
         'PASSWORD': os.getenv('MYSQL_PASSWORD', '123456'),
         'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
         'PORT': os.getenv('MYSQL_PORT', '3306')
+    }
+}
+
+# Haystack
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'web.whoosh_cn_backend.WhooshEngine',
+        'PATH': os.path.join(BASE_DIR, 'web', 'whoosh_index')
     }
 }
 

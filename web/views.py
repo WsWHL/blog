@@ -46,25 +46,26 @@ def index(request, user_id=0, pager=0, size=20):
         'create_user__id', 'create_user__username', 'create_user__email').distinct()
     for item in articles:
         categoryids = item.category_ids.split(',')
+        names = [category.name for category in categories if str(category.id) in categoryids]
         items.append({
             'id': item.id,
             'title': item.title,
             'subject': item.subject,
             'cover': item.cover,
             'tags': [],
-            'categories': [],
+            'categories': names,
             'hits': 99,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
-            'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username==''],
+            'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username == ''],
             'update_time': item.update_time,
             'user_avatar': item.create_user.avatar
         })
 
     return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it',
                                               'articles': items,
-                                              'categories': categories,
-                                              'authors': authors,
+                                              'categories': categories[:10],
+                                              'authors': authors[:10],
                                               'user': request.user,
                                               'count': count,
                                               'pager': pager,
@@ -151,12 +152,11 @@ def reading(request, article_id):
                     'category_ids': model.category_ids,
                     'tag_ids': model.tag_ids,
                     'create_user_id': model.create_user.id,
-                    'create_user_email': (model.create_user.username, model.create_user.email)[model.create_user.username==''],
-                    'create_time': model.create_time.strftime('%Y年%m月%d日 %H:%M:%S')
+                    'create_user_email': (model.create_user.username, model.create_user.email)[model.create_user.username == ''],
+                    'create_time': model.create_time.strftime('%Y/%m/%d %H:%M')
                 }
                 CacheArticles.set(article_id, data)
-        if request.user.is_authenticated and data['create_user_id'] is request.user.id:
-            data['isowner'] = True
+        data['isowner'] = request.user.is_authenticated and data['create_user_id'] is request.user.id
     return render(request, 'web/reading.html', {
         'article': data
     })

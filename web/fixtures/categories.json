@@ -1,0 +1,162 @@
+[
+    {
+        "model": "web.Category",
+        "pk": 1,
+        "fields": {
+            "name": "Python",
+            "spell": "python",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 2,
+        "fields": {
+            "name": "C#",
+            "spell": "c#",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 3,
+        "fields": {
+            "name": "Java",
+            "spell": "java",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 4,
+        "fields": {
+            "name": "C",
+            "spell": "c",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 5,
+        "fields": {
+            "name": "前端",
+            "spell": "qianduan",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 6,
+        "fields": {
+            "name": "大数据",
+            "spell": "dashuju",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 7,
+        "fields": {
+            "name": "高并发",
+            "spell": "gaobingfa",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 8,
+        "fields": {
+            "name": "Cache",
+            "spell": "cache",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 9,
+        "fields": {
+            "name": "摄影",
+            "spell": "sheying",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    },
+    {
+        "model": "web.Category",
+        "pk": 10,
+        "fields": {
+            "name": "每日一记",
+            "spell": "jishiben",
+            "level": 1,
+            "parent_id": 0,
+            "sort": 0,
+            "create_user_id": 1,
+            "create_time": "2019-06-26 23:00",
+            "update_user_id": 1,
+            "update_time": "2019-06-26 23:23",
+            "is_deleted": 0
+        }
+    }
+]

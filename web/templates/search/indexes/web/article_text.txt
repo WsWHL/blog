@@ -1,0 +1,3 @@
+{{ object.title }}
+{{ object.subject }}
+{{ object.content }}

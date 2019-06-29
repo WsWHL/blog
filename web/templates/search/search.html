@@ -1,0 +1,52 @@
+{% extends "web/base/base.html" %}
+{% block title %}搜索{% endblock %}
+
+{% load filter_extras %}
+{% block content %}
+{% include 'web/base/header.html' %}
+<br>
+<div class="grid-container" style="min-height: 600px;">
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12 medium-10 large-10 medium-offset-1 large-offset-1">
+            {% if query %}
+            {% for result in page.object_list %}
+            <div class="callout" data-closable>
+                <div class="media-object align-middle">
+                    <div class="media-object-section show-for-medium">
+                        <div class="thumbnail">
+                            <img src="{{ result.object.create_user.avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
+                                style="width: 100px;height: 100px;">
+                        </div>
+                    </div>
+                    <div class="media-object-section" style="width: 100%;">
+                        <h5>
+                            <p>
+                                <a href="/reading/{{ result.object.id }}/">{{ result.object.title }}</a>
+                            </p>
+                        </h5>
+                        <p>{{ result.object.subject }}</p>
+                        <p>作者：
+                            <a href="/index/u{{ result.object.create_user.id }}/">
+                                {{ result.object.create_user.username | default:result.object.create_user.email | usersafe }}
+                            </a>
+                            <span class="float-right">{{ result.object.create_time|date:'Y年m月d H:i' }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if page.has_previous or page.has_next %}
+            <div>
+                {% if page.has_previous %}<a
+                    href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo;
+                    Previous{% if page.has_previous %}</a>{% endif %}
+                |
+                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next
+                    &raquo;{% if page.has_next %}</a>{% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

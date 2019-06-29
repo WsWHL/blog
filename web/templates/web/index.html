@@ -55,7 +55,7 @@
                             </div>
                             <h3>
                                 <a href="/reading/{{ article.id }}/">{{ article.title }}</a>
-                                <small>{{ article.create_time|date:'d/m/Y' }}</small>
+                                <small>{{ article.create_time|date:'Y/m/d' }}</small>
                             </h3>
                             <img class="thumbnail" src="/static/images/banner.jpg">
                             <p>{{ article.subject }}</p>
@@ -63,14 +63,14 @@
                                 <ul class="menu simple">
                                     <li>
                                         <a href="/index/u{{ article.create_user_id }}">
-                                            Author: {{ article.create_user_name |usersafe }}
+                                            作者: {{ article.create_user_name |usersafe }}
                                         </a>
                                     </li>
-                                    <li><a href="#">Comments: {{ article.hits }}</a></li>
-                                    {% if article.tags %}
+                                    <li><a href="#">阅读数: {{ article.hits }}</a></li>
+                                    {% if article.categories %}
                                         <li class="float-right show-for-medium">
-                                            {% for tag in article.tags %}
-                                                <span class="primary label">{{ tag }}</span>
+                                            {% for category in article.categories %}
+                                                <span class="primary label">{{ category }}</span>
                                             {% endfor %}
                                         </li>
                                     {% endif %}
@@ -100,7 +100,7 @@
                                         <p>{{ article.subject }}</p>
                                         <p>作者：
                                             <a href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name | usersafe }}</a>
-                                            <span class="float-right">{{ article.create_time|date:'Y/m/d H:i:s' }}</span>
+                                            <span class="float-right">{{ article.create_time|date:'Y/m/d H:i' }}</span>
                                         </p>
                                     </div>
                                 </div>
