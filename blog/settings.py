@@ -114,8 +114,12 @@ CACHES = {
     }
 }
 
+# SESSION
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_AGE = 24 * 60 * 60
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 CUBES_REDIS_TIMEOUT = 60 * 60
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
@@ -157,7 +161,6 @@ USE_TZ = False
 # 静态文件本地绝对路径
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'web', 'static')
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'web', 'static')]
 
 # 动态文件本地绝对路径
 MEDIA_URL = '/media/'

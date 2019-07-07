@@ -11,7 +11,7 @@ services:
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: 123456
     volumes: 
-      - mysql-blog:/var/lib/mysql
+      - mysql:/var/lib/mysql
     ports:
       - 3307:3306
   redis:
@@ -52,4 +52,4 @@ services:
 volumes: 
   staticfiles:
   mediafiles:
-  mysql-blog:
+  mysql:

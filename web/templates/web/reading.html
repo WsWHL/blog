@@ -6,6 +6,10 @@
 {% block style %}
     <link rel="stylesheet" href="/static/css/editormd.preview.min.css" />
     <style type="text/css">
+        h1 {
+            font-size: 1.9275em;
+        }
+
         .btn-create {
             position: fixed;
             right: 8%;
@@ -19,15 +23,16 @@
     <br>
     <div class="grid-container">
         <div class="grid-x grid-margin-x">
-            <div id="toc-menu" class="cell medium-2 large-2 show-for-medium">
+            <div class="cell medium-2 large-2 show-for-medium">
+                <h5>目录：</h5>
+                <div id="toc-menu"></div>
             </div>
             <div class="cell small-12 medium-10 large-8 large-offset-1">
                 <div class="callout">
-                    <h3 class="text-center">{{ article.title }}</h3>
+                    <h1 class="text-center">{{ article.title }}</h1>
                     <p class="text-center">{{ article.subject }}</p>
                     <br>
                     <div id="markdown-view">
-                        <!-- Server-side output Markdown text -->
                         <textarea style="display:none;">{{ article.content }}</textarea>
                     </div>
                     <br>

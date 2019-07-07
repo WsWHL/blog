@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.conf import settings
+from django.db.models import F
 
 from web.cache import CacheArticles
 
@@ -23,8 +24,6 @@ from web.utils.captcha import captcha
 logger = logging.getLogger(__name__)
 
 # 首页
-
-
 def index(request, user_id=0, pager=0, size=20):
     title = '欢迎来到本站'
     if request.user.is_authenticated:
@@ -47,6 +46,10 @@ def index(request, user_id=0, pager=0, size=20):
     for item in articles:
         categoryids = item.category_ids.split(',')
         names = [category.name for category in categories if str(category.id) in categoryids]
+        hits = CacheArticles.get_reading(item.id)
+        if hits == 0:
+            CacheArticles.reading(item.id, item.hits)
+            hits = item.hits
         items.append({
             'id': item.id,
             'title': item.title,
@@ -54,7 +57,7 @@ def index(request, user_id=0, pager=0, size=20):
             'cover': item.cover,
             'tags': [],
             'categories': names,
-            'hits': 99,
+            'hits': hits,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
             'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username == ''],
@@ -139,6 +142,7 @@ def upload(request):
 def reading(request, article_id):
     data = None
     if article_id and article_id > 0:
+        model = None
         data = CacheArticles.get(article_id)
         if data is None:
             model = Article.objects.first(id=article_id)
@@ -157,12 +161,19 @@ def reading(request, article_id):
                 }
                 CacheArticles.set(article_id, data)
         data['isowner'] = request.user.is_authenticated and data['create_user_id'] is request.user.id
+        if request.user and request.user.is_authenticated:
+            ip_str = ip.get_client_ip(request)
+            if CacheArticles.get_reading_key(article_id, request.user.id ,ip_str) == 0:
+                Article.objects.filter(id=article_id).update(hits=F('hits') + 1)
+                CacheArticles.reading(article_id, 1)
+                CacheArticles.set_reading_key(article_id, request.user.id, ip_str)
     return render(request, 'web/reading.html', {
         'article': data
     })
 
 
 # 删除文章
+@login_required
 def delete_article(request, article_id):
     message = '你还有没有登录！'
     if request.user and request.user.is_authenticated:

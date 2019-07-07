@@ -1,114 +1,146 @@
 {% extends "web/base/base.html" %}
 {% block title %}
-    {% if is_login %}登录{% else %}注册{% endif %}
+{% if is_login %}登录{% else %}注册{% endif %}
 {% endblock %}
+{% block style %}
+<style type="text/css">
+    .type-wrap {
+        margin: 10px auto;
+        height: 50px;
+    }
+
+    #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #2a2e31;
+        z-index: -3;
+    }
+</style>
+{% endblock style %}
 
 {% block content %}
-    <div style="position: relative;width: 100%;height: 100%;background-color: #f8f8f8;z-index: -3;"></div>
-    <div class="grid-y grid-frame">
-        <div class="media-object align-center-middle" style="height: 100%;">
-            <div class="media-object-section">
-                <ul class="tabs" data-tabs id="account-tabs">
-                    <li class="tabs-title {{ is_login | default_if_none:'' }}">
-                        <a href="#login">登录</a>
-                    </li>
-                    <li class="tabs-title {{ is_register | default_if_none:'' }}">
-                        <a href="#register">加入我们</a>
-                    </li>
-                </ul>
-                <div class="tabs-content" data-tabs-content="account-tabs">
-                    <div class="tabs-panel {{ is_login | default_if_none:'' }}" id="login">
-                        <form action="/login/?next={{ next | urlencode }}" method="post" data-abide novalidate>
-                            {% csrf_token %}
-                            <div class="column">
-                                <label>用户名
-                                    <input name="username" type="text" value="{{ login.username.value }}" required>
-                                    <span class="form-error">请输入用户名或邮箱！</span>
-                                    <span class="form-error"
-                                          style="display: block;">{{ login.username.errors }}</span>
-                                </label>
+<div id="particles-js"></div>
+<div class="grid-y grid-frame">
+    <div class="media-object align-center-middle" style="height: 100%;">
+        <div class="media-object-section">
+            <div class="type-wrap">
+                <div id="typed-strings" style="display: none">
+                    <p><span style="font-size: 24px;color:aliceblue;">欢迎访问<i style="color:burlywood;">隅谷</i>的博客！</span></p>
+                </div>
+                <span id="typed" style="white-space:pre-wrap;"></span>
+            </div>
+            <ul class="tabs" data-tabs id="account-tabs">
+                <li class="tabs-title {{ is_login | default_if_none:'' }}">
+                    <a href="#login">登录</a>
+                </li>
+                <li class="tabs-title {{ is_register | default_if_none:'' }}">
+                    <a href="#register">加入我们</a>
+                </li>
+            </ul>
+            <div class="tabs-content" data-tabs-content="account-tabs">
+                <div class="tabs-panel {{ is_login | default_if_none:'' }}" id="login">
+                    <form action="/login/?next={{ next | urlencode }}" method="post" data-abide novalidate>
+                        {% csrf_token %}
+                        <div class="column">
+                            <label>用户名
+                                <input name="username" type="text" value="{{ login.username.value }}" required>
+                                <span class="form-error">请输入用户名或邮箱！</span>
+                                <span class="form-error" style="display: block;">{{ login.username.errors }}</span>
+                            </label>
+                        </div>
+                        <div class="column">
+                            <label>密码
+                                <input name="password" type="password" value="{{ login.password.value }}" required>
+                                <span class="form-error">请输入登录密码！</span>
+                                <span class="form-error" style="display:block;">{{ login.password.errors }}</span>
+                            </label>
+                        </div>
+                        <div class="column">
+                            <div class="grid-x grid-margin-x">
+                                <div class="cell small-6 medium-6 large-6">
+                                    <img src="/code/"
+                                        onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())" />
+                                </div>
+                                <div class="cell small-6 medium-6 large-6">
+                                    <input type="text" name="code" autocapitalize="off" required>
+                                </div>
                             </div>
-                            <div class="column">
-                                <label>密码
-                                    <input name="password" type="password" value="{{ login.password.value }}" required>
-                                    <span class="form-error">请输入登录密码！</span>
-                                    <span class="form-error"
-                                          style="display:block;">{{ login.password.errors }}</span>
-                                </label>
-                            </div>
+                        </div>
+                        <div class="column text-right">
+                            <a href="#">忘记密码？</a>
+                            <button type="submit" class="button">登录</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tabs-panel {{ is_register | default_if_none:'' }}" id="register">
+                    <form action="/register/?next={{ next | urlencode }}" method="post" data-abide>
+                        {% csrf_token %}
+                        <div class="column">
+                            <label>用户名
+                                <input name="username" type="text" minlength="8" maxlength="50"
+                                    value="{{ register.username.value }}" required>
+                                <span class="form-error">请输入用户名或邮箱！</span>
+                                <span class="form-error" style="display: block;">{{ register.username.errors }}</span>
+                            </label>
+                        </div>
+                        <div class="column">
+                            <label>密码
+                                <input name="password" id="password" type="password" minlength="8" maxlength="16"
+                                    value="{{ register.password.value }}" required>
+                                <span class="form-error">请输入密码！</span>
+                                <span class="form-error" style="display: block;">{{ register.password.errors }}</span>
+                            </label>
+                        </div>
+                        <div class="column">
+                            <label>重复密码
+                                <input name="re_password" type="password" minlength="8" maxlength="16"
+                                    value="{{ register.re_password.value }}" required data-equalto="password">
+                                <span class="form-error">请再次输入密码，确保两次密码一致！</span>
+                                <span class="form-error"
+                                    style="display: block;">{{ register.re_password.errors }}</span>
+                            </label>
+                        </div>
+                        <div class="column">
                             <div class="column">
                                 <div class="grid-x grid-margin-x">
                                     <div class="cell small-6 medium-6 large-6">
                                         <img src="/code/"
-                                             onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())"/>
+                                            onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())" />
                                     </div>
                                     <div class="cell small-6 medium-6 large-6">
                                         <input type="text" name="code" autocapitalize="off" required>
                                     </div>
                                 </div>
                             </div>
-                            <div class="column text-right">
-                                <a href="#">忘记密码？</a>
-                                <button type="submit" class="button">登录</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tabs-panel {{ is_register | default_if_none:'' }}" id="register">
-                        <form action="/register/?next={{ next | urlencode }}" method="post" data-abide>
-                            {% csrf_token %}
-                            <div class="column">
-                                <label>用户名
-                                    <input name="username" type="text" minlength="8" maxlength="50"
-                                           value="{{ register.username.value }}" required>
-                                    <span class="form-error">请输入用户名或邮箱！</span>
-                                    <span class="form-error"
-                                          style="display: block;">{{ register.username.errors }}</span>
-                                </label>
-                            </div>
-                            <div class="column">
-                                <label>密码
-                                    <input name="password" id="password" type="password" minlength="8" maxlength="16"
-                                           value="{{ register.password.value }}" required>
-                                    <span class="form-error">请输入密码！</span>
-                                    <span class="form-error"
-                                          style="display: block;">{{ register.password.errors }}</span>
-                                </label>
-                            </div>
-                            <div class="column">
-                                <label>重复密码
-                                    <input name="re_password" type="password" minlength="8" maxlength="16"
-                                           value="{{ register.re_password.value }}" required
-                                           data-equalto="password">
-                                    <span class="form-error">请再次输入密码，确保两次密码一致！</span>
-                                    <span class="form-error"
-                                          style="display: block;">{{ register.re_password.errors }}</span>
-                                </label>
-                            </div>
-                            <div class="column">
-                                <div class="column">
-                                    <div class="grid-x grid-margin-x">
-                                        <div class="cell small-6 medium-6 large-6">
-                                            <img src="/code/"
-                                                 onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())"/>
-                                        </div>
-                                        <div class="cell small-6 medium-6 large-6">
-                                            <input type="text" name="code" autocapitalize="off" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column text-center">
-                                <button type="submit" class="button success expanded">注册</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="column text-center">
+                            <button type="submit" class="button success expanded">注册</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 {% block copyright %}{% endblock %}
 
 {% block script %}
-    <script zIndex="-2" count="200" src="/static/js/canvas-nest.js"></script>
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/typed.min.js"></script>
+<script type="text/javascript">
+    particlesJS.load('particles-js', '/static/assets/particles.json', function () {
+    });
+    var typed = new Typed('#typed', {
+        stringsElement: '#typed-strings',
+        typeSpeed: 50,
+        backSpeed: 30,
+        backDelay: 1000,
+        startDelay: 1000,
+        cursorChar: '<span style="color:green;">_</span>',
+        smartBackspace: false,
+        loop: true
+    });
+</script>
 {% endblock %}

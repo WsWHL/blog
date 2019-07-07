@@ -1,6 +1,7 @@
 from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
@@ -21,6 +22,7 @@ urlpatterns = [
     path('confirm/<str:token>', views.user_confirm, name='confirm'),
     path('about/', views.about, name='about'),
     path('search/', include('haystack.urls')),
+    path('favicon.ico', RedirectView.as_view(url='/static/images/favicon.ico', permanent=True)),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # MEDIA
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
