@@ -8,7 +8,7 @@
 * 开发工具：vs code
 * 数据库：my sql
 * 缓存：redis
-* 代理：nginx
+* 服务：nginx
 > Python >= 3.7.2
 > Django >= 2.1.6
 > Foundation >= 6.5
