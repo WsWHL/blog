@@ -2,6 +2,7 @@ import os
 import time
 import base64
 import logging
+import random
 
 from django.contrib.auth import (
     authenticate, login, logout
@@ -24,19 +25,19 @@ from web.utils.captcha import captcha
 logger = logging.getLogger(__name__)
 
 # 首页
-def index(request, user_id=0, pager=0, size=20):
-    title = '欢迎来到本站'
-    if request.user.is_authenticated:
-        title = request.user.email
+def index(request, user_id=0, pager=1, size=10):
+    user = None
+    pager = (1, pager)[pager > 0]
     if user_id and user_id > 0:
+        user = UserInfo.objects.first(id=user_id)
         articles = Article.objects.filter(create_user_id=user_id, is_deleted=False).order_by('-topping',
                                                                                              '-create_time',
-                                                                                             'id')[pager:size]
+                                                                                             'id')[(pager - 1) * size:pager * size]
         count = Article.objects.filter(
             create_user_id=user_id, is_deleted=False).count()
     else:
         articles = Article.objects.filter(is_deleted=False).order_by(
-            '-topping', '-create_time', 'id')[pager:size]
+            '-topping', '-create_time', 'id')[(pager - 1) * size:pager * size]
         count = Article.objects.filter(is_deleted=False).count()
     items = []
     categories = Category.objects.filter(
@@ -45,7 +46,7 @@ def index(request, user_id=0, pager=0, size=20):
         'create_user__id', 'create_user__username', 'create_user__email').distinct()
     for item in articles:
         categoryids = item.category_ids.split(',')
-        names = [category.name for category in categories if str(category.id) in categoryids]
+        names = [category.name for category in categories if str(category.id) in categoryids][:5]
         hits = CacheArticles.get_reading(item.id)
         if hits == 0:
             CacheArticles.reading(item.id, item.hits)
@@ -64,16 +65,21 @@ def index(request, user_id=0, pager=0, size=20):
             'update_time': item.update_time,
             'user_avatar': item.create_user.avatar
         })
-
-    return render(request, 'web/index.html', {'title': title, 'keywords': '首页,博客,index,blog,个人网站,开发者,it',
-                                              'articles': items,
+    total_pager = (int(count / size) + 1, int(count / size))[int(count % size) == 0]
+    if total_pager - pager >= size:
+        pagers = range(pager, pager + size)
+    else:
+        pagers = range((1,total_pager - size + 1)[total_pager - size > 0], total_pager + 1)
+    return render(request, 'web/index.html', {'articles': items,
                                               'categories': categories[:10],
                                               'authors': authors[:10],
-                                              'user': request.user,
+                                              'user': (user, request.user)[user is None],
                                               'count': count,
                                               'pager': pager,
-                                              'total_pager': (int(count / size) + 1, int(count / size))[
-                                                  int(count % size) == 0]
+                                              'pagers': pagers,
+                                              'pager_url_prefix': ('/index/u%d' % user_id, '/index')[user is None],
+                                              'total_pager': total_pager,
+                                              'number': random.randint(1, 5)
                                               })
 
 
@@ -168,7 +174,13 @@ def reading(request, article_id):
                 CacheArticles.reading(article_id, 1)
                 CacheArticles.set_reading_key(article_id, request.user.id, ip_str)
     return render(request, 'web/reading.html', {
-        'article': data
+        'article': data,
+        'hints': [
+            '请简单粗暴地爱我。',
+            '此处应有打赏',
+             '拿钱去买猫粮，楼下的流浪猫在等我('')ﾉ',
+              '请赏我点铜板买狗粮自己吃，谢谢！'
+        ]
     })
 
 

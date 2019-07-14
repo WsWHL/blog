@@ -6,7 +6,7 @@
         {% if request.user and request.user.is_authenticated %}
         <div class="title-bar-title">{{ request.user.username| default:request.user.email | usersafe }}</div>
         {% else%}
-        <div class="title-bar-title">SoulMate</div>
+        <div class="title-bar-title">This Blog</div>
         {% endif %}
         <div class="title-bar-right">
             <button class="menu-icon" type="button" data-toggle="header-menu"></button>
@@ -28,7 +28,7 @@
             </ul>
         </div>
         <div class="top-bar-right">
-            <form method="get" action="/search/">
+            <form method="GET" action="/search/">
                 <ul class="menu">
                     <li><input type="search" name="q" placeholder="Search"></li>
                     <li>

@@ -15,6 +15,19 @@
             right: 8%;
             bottom: 5%;
         }
+
+        .tooltip {
+            width: 56px;
+            height: 56px;
+            color:#fff;
+            font-size: 20px;
+            line-height: 56px;
+            background-color: #f44336;
+            display:inline-block;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+            transition: .4s ease-in-out;
+        }
     </style>
 {% endblock %}
 
@@ -41,6 +54,36 @@
                         <span class="float-right">{{ article.create_time }}</span>
                     </p>
                 </div>
+                <p class="text-center">
+                    <a style="width: 56px;height: 56px;color:#fff;font-size: 20px;line-height:56px;background-color: #f44336;outline-width:0;
+                    display:inline-block;border-radius: 50%;box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);transition: .4s ease-in-out;"
+                    data-open="tooltipModal" >
+                    赏</a>
+                </p>
+                <div class="reveal tiny align-center-middle" id="tooltipModal" data-close-on-click="true" data-animation-in="spin-in" data-animation-out="spin-out" data-reveal>
+                    <p class="text-center">“{{ hints|random }}”</p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell small-12 medium-6">
+                            <div class="card">
+                                <img src="/static/images/alipay.jpg">
+                                <div class="card-section" style="background-color: #019fe8;">
+                                    <p class="text-center">支付宝</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell small-12 medium-6">
+                            <div class="card">
+                                <img src="/static/images/weixinpay.jpg">
+                                <div class="card-section" style="background-color: #22ab39;">
+                                    <p class="text-center">微信</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="close-button" type="button" data-close>
+                            <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -59,11 +102,11 @@
     $(function(){
         var mkview = editormd.markdownToHTML('markdown-view',{
             emoji:true,
-            tex  : true,
+            //tex  : true,
             toc: true,
-            tocContainer:"#toc-menu"
-            //htmlDecode:true,
-            //htmlDecode:"style,script,iframe"
+            tocContainer:"#toc-menu",
+            htmlDecode:true,
+            htmlDecode:"style,script,iframe"
         });
     });
 </script>

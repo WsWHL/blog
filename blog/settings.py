@@ -173,11 +173,11 @@ AUTH_USER_MODEL = 'web.UserInfo'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-ADMINS = (('dev', os.getenv('EMAIL_USER', '923952105@qq.com')))
+ADMINS = (('dev', os.getenv('EMAIL_USER')))
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
-EMAIL_HOST_USER = os.getenv('EMAIL_USER', '923952105@qq.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD', 'lmnhuxpmhdsebegh')
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 EMAIL_CONFIRM_DAYS = 3
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = EMAIL_HOST_USER

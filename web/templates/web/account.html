@@ -10,6 +10,7 @@
     }
 
     #particles-js {
+        font-size: 0;
         position: absolute;
         width: 100%;
         height: 100%;
@@ -26,7 +27,8 @@
         <div class="media-object-section">
             <div class="type-wrap">
                 <div id="typed-strings" style="display: none">
-                    <p><span style="font-size: 24px;color:aliceblue;">欢迎访问<i style="color:burlywood;">隅谷</i>的博客！</span></p>
+                    <p><span style="font-size: 24px;color:aliceblue;"><span style="color: green;">$ echo</span> 'Welcome to <a href="/" style="color:burlywood;" title="this blog">this blog</a> !'</span></p>
+                    <p><span style="font-size: 24px;color:aliceblue;"><span style="color: green;">$ echo</span> '欢迎访问<a href="/" style="color:antiquewhite;" title="这个博客">这个博客</a> !'</span></p>
                 </div>
                 <span id="typed" style="white-space:pre-wrap;"></span>
             </div>
@@ -138,7 +140,7 @@
         backSpeed: 30,
         backDelay: 1000,
         startDelay: 1000,
-        cursorChar: '<span style="color:green;">_</span>',
+        cursorChar: '<span style="color:red;">_</span>',
         smartBackspace: false,
         loop: true
     });

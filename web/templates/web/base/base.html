@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}隅谷{% endblock %}</title>
-    <meta name="keywords" content="Blog,博客,开发者,程序员,文章,日记,Coding,WsWHL">
-    <meta name="description" content="隅谷的个人博客网站，记录开发中的问题及经验。程序员每日一记，使自己离成功更进一步。">
+    <title>{% block title %}This Blog{% endblock %}</title>
+    <meta name="keywords" content="this,blog,wswhl,博客,开发者,程序员,文章,日记">
+    <meta name="description" content="这个博客网站，记录开发中的问题及经验。程序员每日一记，使自己离成功更进一步。">
     <meta name="applicable-device" content="pc,mobile">
-    <link rel="stylesheet" href="/static/css/foundation.css" title="隅谷" />
-    <link rel="stylesheet" href="/static/css/foundation-icons.css" title="隅谷" />
+    <link rel="stylesheet" href="/static/css/foundation.min.css" title="this blog" />
+    <link rel="stylesheet" href="/static/css/foundation-icons.css" title="this blog" />
     {% block style %}{% endblock %}
 </head>
 <body>
@@ -19,7 +19,7 @@
     <hr>
     <p class="text-center">
         ©2018
-        <a href="https://github.com/WsWHL/blog" target="_blank">
+        <a href="https://github.com/WsWHL/blog" target="github">
             <i class="fi-social-github"></i>
             Ws WHL.</a>
         All Rights Reserved.
@@ -27,7 +27,7 @@
 {% endblock %}
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/what-input.js"></script>
-<script src="/static/js/foundation.js"></script>
+<script src="/static/js/foundation.min.js"></script>
 {% block script %}{% endblock %}
 <script>
     $(document).ready(function () {
