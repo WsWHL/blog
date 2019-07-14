@@ -23,8 +23,7 @@ python manage.py runserver 8000
 ## 部署
 
 - 系统：centos
-- 服务：wsgi
-- 代理：nginx
+- 服务：wsgi、nginx
 - 容器：docker
 
 ### 编译镜像
