@@ -1,197 +1,241 @@
 {% extends "web/base/base.html" %}
 {% load filter_extras %}
 {% block style %}
-    <style type="text/css">
-        .img-avatar {
-            position: relative;
-            display: block;
-        }
+<style type="text/css">
+    #banner {
+        background-image: url('/static/images/header-1.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        border: none;
+    }
 
-        .btn-create {
-            position: fixed;
-            right: 8%;
-            bottom: 5%;
-        }
+    #bannerTop {
+        height: 100px;
+        background-position: center top;
+        background-size: cover;
+        position: relative;
+        border-radius: 50px;
+        z-index: 1;
+    }
 
-        #content {
-            min-height: 600px;
-        }
-    </style>
+    #bannerTop::after {
+        width: 100%;
+        height: 100%;
+        content: '';
+        position: absolute;
+        background-color: rgba(255,255,255,0.8);
+        background-position: center top;
+        background-attachment: fixed;
+        background-size: cover;
+        -webkit-filter: blur(20px);
+        -moz-filter: blur(20px);
+        -ms-filter: blur(20px);
+        -o-filter: blur(20px);
+        filter: blur(20px);
+        z-index: -1;
+    }
+
+    #topTitle {
+        background-color: #ffffff;
+        padding: 0 10px;
+        margin-bottom: 0;
+        line-height: 1.7;
+        position: relative;
+    }
+
+    #topTitle small {
+        position: absolute;
+        right: 10px;
+        bottom: 50%;
+    }
+
+    .img-avatar {
+        position: relative;
+        display: block;
+    }
+
+    .btn-create {
+        position: fixed;
+        right: 8%;
+        bottom: 5%;
+    }
+
+    #content {
+        min-height: 600px;
+    }
+</style>
 {% endblock %}
 {% block content %}
-    <div class="callout large primary" id="banner">
-        <div class="row column">
-            <div class="media-object align-center-middle" style="height: 100px;">
-                <div class="media-object-section">
-                    <a class="img-avatar" href="/user/">
-                        <img src="{{ user.avatar | default:'/static/images/avatars/xhr_7.jpg' }}"
-                             style="width: 80px;height: 80px;border-radius: 40px;">
-                    </a>
-                </div>
-                <div class="media-object-section">
-                    {% if user and user.is_authenticated %}
-                        <h4>{{ user.username |default:user.email|usersafe }}</h4>
-                        <p>{{ user.introduce|truncatechars:50 }}</p>
-                    {% else %}
-                        <h4><a href="/login/">登录</a></h4>
-                    {% endif %}
-                </div>
+<div class="callout large primary" id="banner">
+    <div class="row column">
+        <div id="bannerTop" class="media-object align-center-middle">
+            <div class="media-object-section">
+                <a class="img-avatar" {% if user and user.is_authenticated %} href="/user/" {% else %} href="/login/"
+                    {% endif %}>
+                    <img src="{{ user.avatar | default:'/static/images/logo.gif' }}"
+                        style="width: 80px;height: 80px;border-radius: 40px;">
+                </a>
+            </div>
+            <div class="media-object-section">
+                {% if user and user.is_authenticated %}
+                <h4>{{ user.username |default:user.email|usersafe }}</h4>
+                <p>{{ user.introduce|truncatechars:50 }}</p>
+                {% endif %}
             </div>
         </div>
     </div>
-    <div class="grid-container" id="content">
-        <div class="grid-x grid-margin-x">
-            <div class="cell small-12 medium-8 large-8">
-                <div id="sticky-menu" data-sticky-container>
-                    <div class="column" data-sticky data-options="marginTop:0;"
-                         style="width:100%;background-color: rgb(254,254,254);" data-anchor="content">
-                        <ul class="menu">
-                            <li class="is-active"><a href="/">首页</a></li>
-                            <li><a href="#">时间轴</a></li>
-                            <li><a href="#">技术杂谈</a></li>
-                            <li><a href="/about/">关于</a></li>
-                        </ul>
-                    </div>
+</div>
+<div class="grid-container" id="content">
+    <div class="grid-x grid-margin-x">
+        <div class="cell small-12 medium-8 large-8">
+            <div id="sticky-menu" data-sticky-container>
+                <div class="column" data-sticky data-options="marginTop:0;"
+                    style="width:100%;background-color: rgb(254,254,254);" data-anchor="content">
+                    <ul class="menu">
+                        <li class="is-active"><a href="/">首页</a></li>
+                        <li><a href="#">时间轴</a></li>
+                        <li><a href="#">技术杂谈</a></li>
+                        <li><a href="/about/">关于</a></li>
+                    </ul>
                 </div>
-                {% if articles %}
-                    {% for article in articles %}
-                        {% if forloop.counter0 == 0 %}
-                            <h3>
-                                <a href="/reading/{{ article.id }}/">{{ article.title|truncatechars:20 }}</a>
-                                <small class="float-right" style="margin-top: 20px;">{{ article.create_time|date:'Y/m/d' }}</small>
-                            </h3>
-                            <div class="orbit" role="region" data-orbit>
-                                <div class="orbit-wrapper">
-                                    <ul class="orbit-container">
-                                        <li class="is-active orbit-slide">
-                                            <img class="orbit-image" src="/static/images/banner-{{ number }}.jpg">
-                                            {% if article.subject %}
-                                            <figcaption class="orbit-caption">{{ article.subject|truncatechars:35 }}</figcaption>
-                                            {% endif %}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="callout">
-                                <ul class="menu simple">
-                                    <li>
-                                        <a href="/index/u{{ article.create_user_id }}">
-                                            作者: {{ article.create_user_name |usersafe }}
-                                        </a>
-                                    </li>
-                                    <li>阅读数: {{ article.hits }}</li>
-                                    {% if article.categories %}
-                                        <li class="float-right show-for-medium">
-                                            {% for category in article.categories %}
-                                                <span class="primary label">{{ category }}</span>
-                                            {% endfor %}
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        {% else %}
-                            <div class="callout" data-closable>
-                                <div class="media-object align-middle">
-                                    <div class="media-object-section show-for-medium">
-                                        <div class="thumbnail">
-                                            <img src="{{ article.user_avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
-                                                 style="width: 100px;height: 100px;">
-                                        </div>
-                                    </div>
-                                    <div class="media-object-section" style="width: 100%;">
-                                        <h5>
-                                            {% if user and user.is_authenticated and user.id == article.create_user_id %}
-                                                <button type="button" class="close-button" aria-label="close alert"
-                                                        data-close>
-                                                    <span aria-hidden="true" onclick="deleted({{ article.id }});">&times;</span>
-                                                </button>
-                                            {% endif %}
-                                            <p>
-                                                <a href="/reading/{{ article.id }}/">{{ article.title|truncatechars:20 }}</a>
-                                            </p>
-                                        </h5>
-                                        <p>{{ article.subject|truncatechars:30 }}</p>
-                                        <p>作者：
-                                            <a href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name | usersafe }}</a>
-                                            &nbsp;&nbsp;&nbsp;
-                                            <span>阅读数：{{ article.hits }}</span>
-                                            <span class="float-right">{{ article.create_time|date:'Y/m/d H:i' }}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                </div>
-                <div class=" cell medium-3 medium-offset-1 large-3 large-offset-1 show-for-medium"
-                     data-sticky-container>
-                    <div class="sticky" data-sticky data-anchor="content">
-                        {% if categories %}
-                            <h4>分类</h4>
-                            <ul>
-                                {% for category in categories %}
-                                    <li><a href="/{{ category.id }}/">{{ category.name }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                        {% if authors %}
-                            <h4>作者</h4>
-                            <ul>
-                                {% for author in authors %}
-                                    <li>
-                                        <a href="/index/u{{ author.create_user__id }}">{{ author.create_user__username | default:author.create_user__email | usersafe }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
             </div>
-        </div>
-        {% if pagers|length > 1 %}
-            <div class="row column">
-                <ul class="pagination" role="navigation" aria-label="Pagination">
-                    {% if pager > 1 %}
-                    <li><a href="{{ pager_url_prefix }}/p{{ pager|add:-1 }}"><<</a></li>
-                    {% else %}
-                    <li class="disabled"><<</li>
-                    {% endif %}
-                    {% for index in pagers %}
-                        {% if index == pager %}
-                            <li class="current"><span class="show-for-sr">You're on page</span>{{ index }}</li>
-                        {% else %}
-                            <li><a href="{{ pager_url_prefix }}/p{{ index }}" aria-label="Page 2">{{ index }}</a></li>
-                        {% endif %}
-                        {% if forloop.last and index < total_pager %}
-                        <li class="ellipsis"></li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if pagers|last == pager %}
-                    <li class="disabled">>></li>
-                    {% else %}
-                    <li><a href="{{ pager_url_prefix }}/p{{ pager|add:1 }}/">>></a></li>
+            {% if articles %}
+            {% for article in articles %}
+            {% if forloop.counter0 == 0 %}
+            <h3 id="topTitle">
+                <a href="/reading/{{ article.id }}/">{{ article.title|truncatechars:20 }}</a>
+                <small>{{ article.create_time|date:'Y/m/d' }}</small>
+            </h3>
+            <div class="orbit" role="region" data-orbit>
+                <div class="orbit-wrapper">
+                    <ul class="orbit-container">
+                        <li class="is-active orbit-slide">
+                            <img class="orbit-image" src="/static/images/banner-{{ number }}.jpg">
+                            {% if article.subject %}
+                            <figcaption class="orbit-caption">{{ article.subject|truncatechars:35 }}</figcaption>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">
+                <ul class="menu simple">
+                    <li>
+                        <a href="/index/u{{ article.create_user_id }}">
+                            <i class="fi-pencil"></i> {{ article.create_user_name |usersafe }}
+                        </a>
+                    </li>
+                    <li><i class="fi-eye"></i> {{ article.hits }}</li>
+                    {% if article.categories %}
+                    <li class="float-right show-for-medium">
+                        {% for category in article.categories %}
+                        <span class="primary label">{{ category }}</span>
+                        {% endfor %}
+                    </li>
                     {% endif %}
                 </ul>
             </div>
-        {% endif %}
+            {% else %}
+            <div class="callout" data-closable>
+                <div class="media-object align-middle">
+                    <div class="media-object-section show-for-medium">
+                        <div class="thumbnail">
+                            <img src="{{ article.user_avatar | default:'\static\images\logo.gif' }}"
+                                style="width: 100px;height: 100px;">
+                        </div>
+                    </div>
+                    <div class="media-object-section" style="width: 100%;">
+                        <h5>
+                            {% if request.user.is_authenticated and request.user.id == article.create_user_id %}
+                            <button type="button" class="close-button" aria-label="close alert" data-close>
+                                <span aria-hidden="true" onclick="deleted({{ article.id }});">&times;</span>
+                            </button>
+                            {% endif %}
+                            <p>
+                                <a href="/reading/{{ article.id }}/">{{ article.title|truncatechars:20 }}</a>
+                            </p>
+                        </h5>
+                        <p>{{ article.subject|truncatechars:30 }}</p>
+                        <p><i class="fi-pencil"></i>
+                            <a
+                                href="/index/u{{ article.create_user_id }}/">{{ article.create_user_name | usersafe }}</a>
+                            &nbsp;&nbsp;&nbsp;
+                            {% if article.hits > 0 %}
+                            <span><i class="fi-eye"></i> {{ article.hits }}</span>
+                            {% endif %}
+                            <span class="float-right">{{ article.create_time|date:'Y/m/d H:i' }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class=" cell medium-3 medium-offset-1 large-3 large-offset-1 show-for-medium" data-sticky-container>
+            <div class="sticky" data-sticky data-anchor="content">
+                {% if categories %}
+                <h4><i class="fi-paperclip"></i> 分类</h4>
+                <ul>
+                    {% for category in categories %}
+                    <li><a href="/{{ category.id }}/">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if authors %}
+                <h4><i class="fi-pencil"></i> 作者</h4>
+                <ul>
+                    {% for author in authors %}
+                    <li>
+                        <a
+                            href="/index/u{{ author.create_user__id }}">{{ author.create_user__username | default:author.create_user__email | usersafe }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <!-- menu -->
-    <a href="/article/" class="button btn-create">
-        <span class="show-for-x"></span>
-        <span aria-hidden="true"><i class="fi-pencil"></i></span>
-    </a>
-    {% csrf_token %}
+    {% if pagers|length > 1 %}
+    <div class="row column">
+        <ul class="pagination" role="navigation" aria-label="Pagination">
+            {% if pager > 1 %}
+            <li><a href="{{ pager_url_prefix }}/p{{ pager|add:-1 }}"><i class="fi-arrow-left"></i></a></li>
+            {% endif %}
+            {% for index in pagers %}
+            {% if index == pager %}
+            <li class="current"><span class="show-for-sr">You're on page</span>{{ index }}</li>
+            {% else %}
+            <li><a href="{{ pager_url_prefix }}/p{{ index }}" aria-label="Page 2">{{ index }}</a></li>
+            {% endif %}
+            {% if forloop.last and index < total_pager %}
+            <li class="ellipsis"></li>
+            {% endif %}
+            {% endfor %}
+            {% if pagers|last != pager %}
+            <li><a href="{{ pager_url_prefix }}/p{{ pager|add:1 }}/"><i class="fi-arrow-right"></i></a></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+<!-- menu -->
+<a href="/article/" class="button btn-create">
+    <span class="show-for-x"></span>
+    <span aria-hidden="true"><i class="fi-pencil"></i></span>
+</a>
+{% csrf_token %}
 {% endblock %}
 
 {% block script %}
-    <script type="text/javascript" src="/static/js/script.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sticky-menu').on('sticky.zf.stuckto:top', function () {
-                $(this).children().css('box-shadow', '0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08)');
-            }).on('sticky.zf.unstuckfrom:top', function () {
-                $(this).children().css('box-shadow', 'unset');
-            });
+<script type="text/javascript" src="/static/js/script.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sticky-menu').on('sticky.zf.stuckto:top', function () {
+            $(this).children().css('box-shadow', '0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08)');
+        }).on('sticky.zf.unstuckfrom:top', function () {
+            $(this).children().css('box-shadow', 'unset');
         });
-    </script>
+    });
+</script>
 {% endblock %}

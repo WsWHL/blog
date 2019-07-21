@@ -14,7 +14,7 @@
                 <div class="media-object align-middle">
                     <div class="media-object-section show-for-medium">
                         <div class="thumbnail">
-                            <img src="{{ result.object.create_user.avatar | default:'\static\images\avatars\xhr_7.jpg' }}"
+                            <img src="{{ result.object.create_user.avatar | default:'\static\images\logo.gif' }}"
                                 style="width: 100px;height: 100px;">
                         </div>
                     </div>
@@ -25,11 +25,15 @@
                             </p>
                         </h5>
                         <p>{{ result.object.subject }}</p>
-                        <p>作者：
+                        <p><i class="fi-pencil"></i> 
                             <a href="/index/u{{ result.object.create_user.id }}/">
                                 {{ result.object.create_user.username | default:result.object.create_user.email | usersafe }}
                             </a>
-                            <span class="float-right">{{ result.object.create_time|date:'Y年m月d H:i' }}</span>
+                            &nbsp;&nbsp;&nbsp;
+                            {% if result.object.hits > 0 %}
+                            <span><i class="fi-eye"></i> {{ result.object.hits }}</span>
+                            {% endif %}
+                            <span class="float-right">{{ result.object.create_time|date:'Y/m/d H:i' }}</span>
                         </p>
                     </div>
                 </div>

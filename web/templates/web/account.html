@@ -14,8 +14,17 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background-color: #2a2e31;
-        z-index: -3;
+        background-color: #fff;
+        z-index: 999;
+    }
+
+    #content{
+        height: 100%;
+    }
+
+    #content div{
+        opacity: 0.95;
+        z-index: 999;
     }
 </style>
 {% endblock style %}
@@ -23,12 +32,12 @@
 {% block content %}
 <div id="particles-js"></div>
 <div class="grid-y grid-frame">
-    <div class="media-object align-center-middle" style="height: 100%;">
+    <div id="content" class="media-object align-center-middle">
         <div class="media-object-section">
             <div class="type-wrap">
                 <div id="typed-strings" style="display: none">
-                    <p><span style="font-size: 24px;color:aliceblue;"><span style="color: green;">$ echo</span> 'Welcome to <a href="/" style="color:burlywood;" title="this blog">this blog</a> !'</span></p>
-                    <p><span style="font-size: 24px;color:aliceblue;"><span style="color: green;">$ echo</span> '欢迎访问<a href="/" style="color:antiquewhite;" title="这个博客">这个博客</a> !'</span></p>
+                    <p><span style="font-size: 24px;color:#000;"><span style="color: green;">$ echo</span> 'Welcome to <a href="/" style="color:burlywood;" title="this blog">this blog</a> !'</span></p>
+                    <p><span style="font-size: 24px;color:#000;"><span style="color: green;">$ echo</span> '欢迎访问<a href="/" style="color:burlywood;" title="这个博客">这个博客</a> !'</span></p>
                 </div>
                 <span id="typed" style="white-space:pre-wrap;"></span>
             </div>
@@ -45,15 +54,15 @@
                     <form action="/login/?next={{ next | urlencode }}" method="post" data-abide novalidate>
                         {% csrf_token %}
                         <div class="column">
-                            <label>用户名
-                                <input name="username" type="text" value="{{ login.username.value }}" required>
-                                <span class="form-error">请输入用户名或邮箱！</span>
+                            <label>邮箱
+                                <input class="this-input" name="username" type="email" value="{{ login.username.value }}" required>
+                                <span class="form-error">请输入邮箱账号！</span>
                                 <span class="form-error" style="display: block;">{{ login.username.errors }}</span>
                             </label>
                         </div>
                         <div class="column">
                             <label>密码
-                                <input name="password" type="password" value="{{ login.password.value }}" required>
+                                <input class="this-input" name="password" type="password" value="{{ login.password.value }}" required>
                                 <span class="form-error">请输入登录密码！</span>
                                 <span class="form-error" style="display:block;">{{ login.password.errors }}</span>
                             </label>
@@ -65,7 +74,7 @@
                                         onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())" />
                                 </div>
                                 <div class="cell small-6 medium-6 large-6">
-                                    <input type="text" name="code" autocapitalize="off" required>
+                                    <input class="this-input" type="text" name="code" autocapitalize="off" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>
@@ -79,16 +88,16 @@
                     <form action="/register/?next={{ next | urlencode }}" method="post" data-abide>
                         {% csrf_token %}
                         <div class="column">
-                            <label>用户名
-                                <input name="username" type="text" minlength="8" maxlength="50"
+                            <label>邮箱
+                                <input class="this-input" name="username" type="email" minlength="8" maxlength="50"
                                     value="{{ register.username.value }}" required>
-                                <span class="form-error">请输入用户名或邮箱！</span>
+                                <span class="form-error">请输入邮箱账号！</span>
                                 <span class="form-error" style="display: block;">{{ register.username.errors }}</span>
                             </label>
                         </div>
                         <div class="column">
                             <label>密码
-                                <input name="password" id="password" type="password" minlength="8" maxlength="16"
+                                <input class="this-input" name="password" id="password" type="password" minlength="8" maxlength="16"
                                     value="{{ register.password.value }}" required>
                                 <span class="form-error">请输入密码！</span>
                                 <span class="form-error" style="display: block;">{{ register.password.errors }}</span>
@@ -96,7 +105,7 @@
                         </div>
                         <div class="column">
                             <label>重复密码
-                                <input name="re_password" type="password" minlength="8" maxlength="16"
+                                <input class="this-input" name="re_password" type="password" minlength="8" maxlength="16"
                                     value="{{ register.re_password.value }}" required data-equalto="password">
                                 <span class="form-error">请再次输入密码，确保两次密码一致！</span>
                                 <span class="form-error"
@@ -111,7 +120,7 @@
                                             onclick="$(this).prop('src', '/code/?t=' + new Date().getTime())" />
                                     </div>
                                     <div class="cell small-6 medium-6 large-6">
-                                        <input type="text" name="code" autocapitalize="off" required>
+                                        <input class="this-input" type="text" name="code" autocapitalize="off" autocomplete="off" required>
                                     </div>
                                 </div>
                             </div>

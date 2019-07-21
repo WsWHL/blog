@@ -45,12 +45,12 @@ class CacheArticles:
             return cls.db.set(key, count)
 
     @classmethod
-    def get_reading_key(cls, article_id: id, user_id: id, reading_ip: str):
-        key = cls.key_prefix_reading_key(article_id, user_id, reading_ip)
+    def get_reading_key(cls, article_id: id, reading_ip: str):
+        key = cls.key_prefix_reading_key(article_id, reading_ip)
         value = cls.db.get(key)
         return (value, 0)[value is None]
 
     @classmethod
-    def set_reading_key(cls, article_id: id, user_id: id, reading_ip: str):
-        key = cls.key_prefix_reading_key(article_id, user_id, reading_ip)
+    def set_reading_key(cls, article_id: id, reading_ip: str):
+        key = cls.key_prefix_reading_key(article_id, reading_ip)
         cls.db.set(key, 1, cls.key_prefix_reading_key.ex)

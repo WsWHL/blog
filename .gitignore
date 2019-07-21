@@ -115,6 +115,9 @@ venv.bak/
 */migrations/*.py
 !*/migrations/__init__.py
 
+# html
+_*.html
+
 */whoosh_index/
 *alipay.jpg
 *weixinpay.jpg

@@ -5,12 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}This Blog{% endblock %}</title>
-    <meta name="keywords" content="this,blog,wswhl,博客,开发者,程序员,文章,日记">
+    <meta name="keywords" content="this,blog,博客,开发者,程序员,文章,日记">
     <meta name="description" content="这个博客网站，记录开发中的问题及经验。程序员每日一记，使自己离成功更进一步。">
     <meta name="applicable-device" content="pc,mobile">
     <link rel="stylesheet" href="/static/css/foundation.min.css" title="this blog" />
     <link rel="stylesheet" href="/static/css/foundation-icons.css" title="this blog" />
+    <link rel="stylesheet" href="/static/css/thisblog.css" title="this blog" />
     {% block style %}{% endblock %}
+    {% include 'web/base/_gtag.html' %}
 </head>
 <body>
 {% block content %}{% endblock %}
@@ -18,7 +20,7 @@
 {% block copyright %}
     <hr>
     <p class="text-center">
-        ©2018
+        ©{% now 'Y' %}
         <a href="https://github.com/WsWHL/blog" target="github">
             <i class="fi-social-github"></i>
             Ws WHL.</a>

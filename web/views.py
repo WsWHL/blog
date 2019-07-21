@@ -61,7 +61,8 @@ def index(request, user_id=0, pager=1, size=10):
             'hits': hits,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
-            'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username == ''],
+            'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username == ''
+             or item.create_user.username is None],
             'update_time': item.update_time,
             'user_avatar': item.create_user.avatar
         })
@@ -162,17 +163,17 @@ def reading(request, article_id):
                     'category_ids': model.category_ids,
                     'tag_ids': model.tag_ids,
                     'create_user_id': model.create_user.id,
-                    'create_user_email': (model.create_user.username, model.create_user.email)[model.create_user.username == ''],
+                    'create_user_email': (model.create_user.username, model.create_user.email)[model.create_user.username == ''
+                     or model.create_user.username is None],
                     'create_time': model.create_time.strftime('%Y/%m/%d %H:%M')
                 }
                 CacheArticles.set(article_id, data)
         data['isowner'] = request.user.is_authenticated and data['create_user_id'] is request.user.id
-        if request.user and request.user.is_authenticated:
-            ip_str = ip.get_client_ip(request)
-            if CacheArticles.get_reading_key(article_id, request.user.id ,ip_str) == 0:
-                Article.objects.filter(id=article_id).update(hits=F('hits') + 1)
-                CacheArticles.reading(article_id, 1)
-                CacheArticles.set_reading_key(article_id, request.user.id, ip_str)
+        ip_str = ip.get_client_ip(request)
+        if CacheArticles.get_reading_key(article_id, ip_str) == 0:
+            Article.objects.filter(id=article_id).update(hits=F('hits') + 1)
+            CacheArticles.reading(article_id, 1)
+            CacheArticles.set_reading_key(article_id, ip_str)
     return render(request, 'web/reading.html', {
         'article': data,
         'hints': [
