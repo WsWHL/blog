@@ -33,7 +33,7 @@ class captcha(object):
         if self.words:
             return set(self.words)
 
-        file_path = os.path.join(current_path, 'words.list')
+        file_path = os.path.join('', 'words.list')
         with open(file_path, 'r') as f:
             return set([line.replace('\n', '') for line in f.readlines()])
         return None
