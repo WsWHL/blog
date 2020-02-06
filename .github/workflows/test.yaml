@@ -20,7 +20,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
         sudo apt-get update && apt-get install -y libmysqlclient-dev
         python -m pip install --upgrade pip
         pip install -r requirements.txt
