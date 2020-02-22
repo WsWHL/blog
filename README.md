@@ -1,4 +1,8 @@
-﻿<h2 align="center">This Blog<h2>
+﻿<h1 align="center">This Blog<h1>
+
+[![Build Status](https://travis-ci.org/WsWHL/blog.png?branch=master)](https://travis-ci.org/WsWHL/blog)
+[![Inline docs](http://inch-ci.org/github/WsWHL/blog.svg?branch=master)](http://inch-ci.org/github/WsWHL/blog)
+
 
 ## 介绍
 ​		本项目是使用Python语言开发的Blog网站。后端使用的是Django框架，前端使用的是Foundation JavaScript库。
