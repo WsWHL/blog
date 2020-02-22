@@ -1,5 +1,6 @@
 {% extends "web/base/base.html" %}
 {% block title %}关于这个博客{% endblock %}
+{% load filter_extras %}
 {% block style %}
 <style type="text/css">
     #user_left>div {
@@ -40,9 +41,8 @@
             <div>
                 <p class="hide-for-medium">WangHailin</p>
                 <p>男</p>
-                <p>25岁</p>
-                <p>2～3年</p>
-                <p>互联网开发工程师</p>
+                <p>{{ '1994-12-26' | time_diff_year }}岁</p>
+                <p>软件开发工程师（{{ '2016-09-01' | time_diff_year }}年）</p>
                 <p><i class="fi-mail"></i> <a href="mailto:whlsoulmate@gmail.com" target="_ethisblog">WangHailin</a></p>
                 <p>
                     <span class="label primary">C#</span>

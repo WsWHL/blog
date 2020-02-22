@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector: 
+    matchLabels:
+      app: web
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  minReadySeconds: 3
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: asia.gcr.io/whl-vps/blog_web:latest
+        command: ["/bin/sh", "-c", "python manage.py rebuild_index --noinput; uwsgi -i uwsgi.ini"]
+        env:
+        - name: DEBUG
+          value: "0"
+        - name: DOMAIN
+          value: "*"
+        - name: EMAIL_USER
+          value: "9239******@qq.com"
+        - name: EMAIL_PASSWORD
+          value: "******"
+        - name: EMAIL_PORT
+          value: "587"
+        - name: MYSQL_HOST
+          value: "mysql-service"
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_DATABASE
+          value: "blog"
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_DB
+          value: "0"
+        - name: SECRET_KEY
+          value: "********************************"
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+        volumeMounts:
+        - name: blog-static-storage
+          mountPath: /usr/src/app/web/static
+        - name: blog-media-storage
+          mountPath: /usr/src/app/web/media
+      volumes:
+      - name: blog-static-storage
+        persistentVolumeClaim:
+          claimName: blog-static-volumeclaim 
+      - name: blog-media-storage
+        persistentVolumeClaim:
+          claimName: blog-media-volumeclaim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: web
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - www.thisblog.cn
+    secretName: tls-secret
+  rules:
+  - host: www.thisblog.cn
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: web-service
+          servicePort: 80
+      - backend:
+          serviceName: nginx-service
+          servicePort: 80
+        path: /static
+      - backend:
+          serviceName: nginx-service
+          servicePort: 80
+        path: /media
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tls-secret
+data:
+  tls.crt: <base64>
+  tls.key: <base64>

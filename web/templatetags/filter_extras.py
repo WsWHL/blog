@@ -1,5 +1,7 @@
-from django import template
 import re
+from datetime import datetime
+
+from django import template
 
 register = template.Library()
 
@@ -23,3 +25,13 @@ def usersafe(value):
         if result:
             return result[0]
     return value
+
+@register.filter
+def time_diff_year(value):
+    """
+    计算当前时间到过去某个时间点差值
+    """
+    if value:
+       endtime = datetime.strptime(value, '%Y-%m-%d')
+       return (datetime.now() - endtime).days // 365
+    return 0

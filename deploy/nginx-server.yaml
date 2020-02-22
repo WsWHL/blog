@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-server
+spec:
+  selector:
+    matchLabels:
+      app: nginx-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-server
+    spec:
+      volumes:
+      - name: nginx-volume
+        configMap:
+          name: nginx-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf
+      - name: blog-static-storage
+        persistentVolumeClaim:
+          claimName: blog-static-volumeclaim
+      - name: blog-media-storage
+        persistentVolumeClaim:
+          claimName: blog-media-volumeclaim
+      containers:
+      - name: nginx-server
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 20m
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-volume
+        - name: blog-static-storage
+          mountPath: /usr/src/app/web/static
+        - name: blog-media-storage
+          mountPath: /usr/src/app/web/media
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx-server
+

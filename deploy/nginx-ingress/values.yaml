@@ -1,0 +1,27 @@
+controller:
+  kind: Deployment
+  replicaCount: 1
+  updateStrategy: 
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  ingressClass: nginx
+  service:
+    enabled: true
+    enableHttp: true
+    enableHttps: true
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 256Mi
+  defaultBackendService: default/web-service
+
+defaultBackend:
+  enabled: false
+
+rbac:
+  create: true
