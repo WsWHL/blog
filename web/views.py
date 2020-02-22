@@ -47,10 +47,6 @@ def index(request, user_id=0, pager=1, size=10):
     for item in articles:
         categoryids = item.category_ids.split(',')
         names = [category.name for category in categories if str(category.id) in categoryids][:5]
-        hits = CacheArticles.get_reading(item.id)
-        if hits == 0:
-            CacheArticles.reading(item.id, item.hits)
-            hits = item.hits
         items.append({
             'id': item.id,
             'title': item.title,
@@ -58,7 +54,7 @@ def index(request, user_id=0, pager=1, size=10):
             'cover': item.cover,
             'tags': [],
             'categories': names,
-            'hits': hits,
+            'hits': item.hits,
             'create_time': item.create_time,
             'create_user_id': item.create_user.id,
             'create_user_name': (item.create_user.username, item.create_user.email)[item.create_user.username == ''
@@ -172,7 +168,6 @@ def reading(request, article_id):
         ip_str = ip.get_client_ip(request)
         if CacheArticles.get_reading_key(article_id, ip_str) == 0:
             Article.objects.filter(id=article_id).update(hits=F('hits') + 1)
-            CacheArticles.reading(article_id, 1)
             CacheArticles.set_reading_key(article_id, ip_str)
     return render(request, 'web/reading.html', {
         'article': data,
