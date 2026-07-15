@@ -4,7 +4,7 @@ Pillow==10.0.1
 pylint==2.2.2
 PyMySQL==0.9.3
 django-redis==4.10.0
-django-haystack==2.8.1
+django-haystack==3.4.0
 jieba==0.39
 Whoosh==2.7.4
 uWSGI==2.0.18
